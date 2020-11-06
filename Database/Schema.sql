@@ -1,26 +1,25 @@
 -- Create initial database
-CREATE DATABASE WMSInventory;
+CREATE DATABASE wmsinventory CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
-USE WMSInventory;
+USE wmsinventory;
 
 -- Create Part table
-DROP TABLE IF EXISTS Parts;
+DROP TABLE IF EXISTS Parts; 
 
 CREATE TABLE Parts (
 	partId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	category varchar DEFAULT NULL,
-	name varchar NOT NULL,
+	category varchar(255) DEFAULT NULL,
+	name varchar(255) NOT NULL,
 	partQuantity int NOT NULL,
-	partLocation varchar DEFAULT NULL
+	partLocation varchar(255) DEFAULT NULL
 );
-
 
 -- Create Category table
 DROP TABLE IF EXISTS Categories;
 
 CREATE TABLE Categories (
 	categoryId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name varchar NOT NULL
+	name varchar(255) NOT NULL
 );
 
 -- Create User table
@@ -28,7 +27,7 @@ DROP TABLE IF EXISTS Users;
 
 CREATE TABLE Users (
 	userId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	password varchar NOT NULL
+	password varchar(255) NOT NULL
 );
 
 -- Create Container table
@@ -39,9 +38,9 @@ CREATE TABLE Containers (
 	partId int REFERENCES Parts(partId),
 	quantity int DEFAULT NULL,
 	size int NOT NULL,
-	reservedPart varchar DEFAULT NULL,
-	location varchar NOT NULL,
-	description varchar DEFAULT NULL,
+	reservedPart varchar(255) DEFAULT NULL,
+	location varchar(255) NOT NULL,
+	description varchar(255) DEFAULT NULL,
 	isEmpty bool DEFAULT TRUE,
 	isReserved bool DEFAULT FALSE
 );
