@@ -1,5 +1,5 @@
 -- Create initial database
-CREATE DATABASE wmsinventory CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+CREATE DATABASE IF NOT EXISTS wmsinventory CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 USE wmsinventory;
 
@@ -35,7 +35,7 @@ DROP TABLE IF EXISTS Containers;
 
 CREATE TABLE Containers (
 	containerId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	partId int REFERENCES Parts(partId),
+	partId int,
 	quantity int DEFAULT NULL,
 	size int NOT NULL,
 	reservedPart varchar(255) DEFAULT NULL,
@@ -49,15 +49,32 @@ CREATE TABLE Containers (
 DROP TABLE IF EXISTS CategorizedBy;
 
 CREATE TABLE CategorizedBy (
-	partId int REFERENCES Parts(partId), 
-	categoryId int REFERENCES Categories(categoryId)
+	partId int NOT NULL, 
+	categoryId int NOT NULL,
+	PRIMARY KEY (partId, categoryId),
+	FOREIGN KEY fk_partId(partId) REFERENCES Parts(partId)
+	ON DELETE CASCADE,
+	FOREIGN KEY fk_categoryId(categoryId) REFERENCES Categories(categoryId)
+	ON DELETE CASCADE
 );
 
 -- Create Used table
 DROP TABLE IF EXISTS Used;
 
 CREATE TABLE Used (
-	userId int REFERENCES Users(userId),
-	partId int REFERENCES Parts(partId),
+	userId int NOT NULL,
+	partId int NOT NULL,
 	usedDate date
+	PRIMARY KEY (userId, partId),
+	FOREIGN KEY fk_userId(userId) REFERENCES User(userId)
+	ON DELETE CASCADE,
+	FOREIGN KEY fk_partId(partId) REFERENCES Parts(partId)
+	ON DELETE CASCADE
 );
+
+-- Create Relationships
+-- Containers
+ALTER TABLE Containers
+ADD CONSTRAINT fk_partId
+FOREIGN KEY (partId) REFERENCES Parts(partId)
+ON DELETE CASCADE;
