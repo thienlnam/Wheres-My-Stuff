@@ -37,4 +37,4 @@ INSERT INTO Users (username, password)
 VALUES ("Fred", "P@ssw0rd");
 
 INSERT INTO Users (username, password)
-VALUES ("Mickey", "ClubH0u$3);
+VALUES ("Mickey", "ClubH0u$3");
