@@ -1,4 +1,4 @@
-USE wmsinventory;
+USE WMSInventory;
 
 -- Insert Example Parts
 INSERT INTO Parts (category, name, partQuantity, partLocation)
@@ -23,11 +23,18 @@ VALUES ("Hammer");
 
 
 -- Insert Example Container
-INSERT INTO Containers (partId, quantity, size, reservedPart, location, description, isEmpty, isReserved)
-VALUES (1, 2, 15, "ScrewA", "A1", "A1 container", FALSE, FALSE);
+INSERT INTO Containers (partId, quantity, size, location, description)
+VALUES (1, 2, 15, "A1", "A1 container");
 
 INSERT INTO Containers (partId, quantity, size, location)
 VALUES (2, 2, 15, "A1");
 
-INSERT INTO Containers (partId, quantity, size, reservedPart, location, description, isEmpty, isReserved)
-VALUES (2, 1, 25, "ScrewAB", "A2", "A2 container", FALSE, FALSE);
+INSERT INTO Containers (partId, quantity, size, location, description)
+VALUES (2, 1, 25, "A2", "A2 container");
+
+-- Insert Example User
+INSERT INTO Users (username, password)
+VALUES ("Fred", "P@ssw0rd");
+
+INSERT INTO Users (username, password)
+VALUES ("Mickey", "ClubH0u$3);

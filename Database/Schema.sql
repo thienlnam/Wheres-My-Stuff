@@ -1,13 +1,13 @@
 -- Create initial database
-CREATE DATABASE IF NOT EXISTS wmsinventory CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+CREATE DATABASE IF NOT EXISTS WMSInventory CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
-USE wmsinventory;
+USE WMSInventory;
 
 -- Create Part table
 DROP TABLE IF EXISTS Parts; 
 
 CREATE TABLE Parts (
-	partId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	partID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	category varchar(255) DEFAULT NULL,
 	name varchar(255) NOT NULL,
 	partQuantity int NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE Parts (
 DROP TABLE IF EXISTS Categories;
 
 CREATE TABLE Categories (
-	categoryId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	categoryID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name varchar(255) NOT NULL
 );
 
@@ -26,7 +26,8 @@ CREATE TABLE Categories (
 DROP TABLE IF EXISTS Users;
 
 CREATE TABLE Users (
-	userId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	userID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	username varchar(255) NOT NULL,
 	password varchar(255) NOT NULL
 );
 
@@ -34,27 +35,24 @@ CREATE TABLE Users (
 DROP TABLE IF EXISTS Containers;
 
 CREATE TABLE Containers (
-	containerId int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	partId int,
+	containerID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	partID int,
 	quantity int DEFAULT NULL,
 	size int NOT NULL,
-	reservedPart varchar(255) DEFAULT NULL,
 	location varchar(255) NOT NULL,
 	description varchar(255) DEFAULT NULL,
-	isEmpty bool DEFAULT TRUE,
-	isReserved bool DEFAULT FALSE
 );
 
 -- Create CategorizedBy table
 DROP TABLE IF EXISTS CategorizedBy;
 
 CREATE TABLE CategorizedBy (
-	partId int NOT NULL, 
-	categoryId int NOT NULL,
-	PRIMARY KEY (partId, categoryId),
-	FOREIGN KEY fk_partId(partId) REFERENCES Parts(partId)
+	partID int NOT NULL, 
+	categoryID int NOT NULL,
+	PRIMARY KEY (partID, categoryID),
+	FOREIGN KEY fk_partID(partID) REFERENCES Parts(partID)
 	ON DELETE CASCADE,
-	FOREIGN KEY fk_categoryId(categoryId) REFERENCES Categories(categoryId)
+	FOREIGN KEY fk_categoryID(categoryID) REFERENCES Categories(categoryID)
 	ON DELETE CASCADE
 );
 
@@ -62,19 +60,19 @@ CREATE TABLE CategorizedBy (
 DROP TABLE IF EXISTS Used;
 
 CREATE TABLE Used (
-	userId int NOT NULL,
-	partId int NOT NULL,
+	userID int NOT NULL,
+	partID int NOT NULL,
 	usedDate date
-	PRIMARY KEY (userId, partId),
-	FOREIGN KEY fk_userId(userId) REFERENCES User(userId)
+	PRIMARY KEY (userID, partId),
+	FOREIGN KEY fk_userID(userID) REFERENCES User(userID)
 	ON DELETE CASCADE,
-	FOREIGN KEY fk_partId(partId) REFERENCES Parts(partId)
+	FOREIGN KEY fk_partID(partID) REFERENCES Parts(partID)
 	ON DELETE CASCADE
 );
 
 -- Create Relationships
 -- Containers
 ALTER TABLE Containers
-ADD CONSTRAINT fk_partId
-FOREIGN KEY (partId) REFERENCES Parts(partId)
+ADD CONSTRAINT fk_partID
+FOREIGN KEY (partID) REFERENCES Parts(partID)
 ON DELETE CASCADE;
