@@ -3,9 +3,14 @@ CREATE DATABASE IF NOT EXISTS WMSInventory CHARACTER SET utf8 COLLATE utf8_unico
 
 USE WMSInventory;
 
--- Create Part table
+-- Drop Tables if Existing
+DROP TABLE IF EXISTS Containers;
+DROP TABLE IF EXISTS CategorizedBy;
+DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Parts; 
+DROP TABLE IF EXISTS Categories;
 
+-- Create Part table
 CREATE TABLE Parts (
 	partID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	category varchar(255) DEFAULT NULL,
@@ -15,37 +20,30 @@ CREATE TABLE Parts (
 );
 
 -- Create Category table
-DROP TABLE IF EXISTS Categories;
-
 CREATE TABLE Categories (
 	categoryID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name varchar(255) NOT NULL
 );
 
 -- Create User table
-DROP TABLE IF EXISTS Users;
-
 CREATE TABLE Users (
 	userID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	partID int,
 	username varchar(255) NOT NULL,
 	password varchar(255) NOT NULL
 );
 
 -- Create Container table
-DROP TABLE IF EXISTS Containers;
-
 CREATE TABLE Containers (
 	containerID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	partID int,
 	quantity int DEFAULT NULL,
 	size int NOT NULL,
 	location varchar(255) NOT NULL,
-	description varchar(255) DEFAULT NULL,
+	description varchar(255) DEFAULT NULL
 );
 
 -- Create CategorizedBy table
-DROP TABLE IF EXISTS CategorizedBy;
-
 CREATE TABLE CategorizedBy (
 	partID int NOT NULL, 
 	categoryID int NOT NULL,
@@ -56,23 +54,15 @@ CREATE TABLE CategorizedBy (
 	ON DELETE CASCADE
 );
 
--- Create Used table
-DROP TABLE IF EXISTS Used;
-
-CREATE TABLE Used (
-	userID int NOT NULL,
-	partID int NOT NULL,
-	usedDate date
-	PRIMARY KEY (userID, partId),
-	FOREIGN KEY fk_userID(userID) REFERENCES User(userID)
-	ON DELETE CASCADE,
-	FOREIGN KEY fk_partID(partID) REFERENCES Parts(partID)
-	ON DELETE CASCADE
-);
-
 -- Create Relationships
+-- Users
+ALTER TABLE Users
+ADD CONSTRAINT user_fk_partID
+FOREIGN KEY (partID) REFERENCES Parts(partID)
+ON DELETE CASCADE;
+
 -- Containers
 ALTER TABLE Containers
-ADD CONSTRAINT fk_partID
+ADD CONSTRAINT container_fk_partID
 FOREIGN KEY (partID) REFERENCES Parts(partID)
 ON DELETE CASCADE;
