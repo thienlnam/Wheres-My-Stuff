@@ -1,6 +1,13 @@
 
 export const sampleItemData = [
   {
+    name: 'Screwdriver',
+    category: 'Tools',
+    container: 'container2',
+    location: 'A3',
+    quantity: 1,
+  },
+  {
     name: 'Sanded Plywood 5"',
     category: 'Wood',
     container: 'container1',
