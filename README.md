@@ -43,3 +43,12 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 ## Learn More
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+
+## Database Setup
+
+MySQL workbench is useful in executing queries and managing the database.
+
+To setup the database, download [mysql server](https://dev.mysql.com/downloads/mysql/) and create a new server and import the Schema.sql file for the database setup.
+
+For test data, import and run the sampleData sql file to execute the query.
