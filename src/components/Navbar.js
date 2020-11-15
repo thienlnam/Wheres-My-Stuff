@@ -1,7 +1,7 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { UnorderedListOutlined, CodeSandboxOutlined, DashboardOutlined } from '@ant-design/icons';
-import * as Constants from '../constants';
+import * as Constants from '../utility/constants';
 
 function Navbar(props) {
     const handleClick = e => {

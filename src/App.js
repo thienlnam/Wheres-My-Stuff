@@ -4,7 +4,7 @@ import ItemListPage from './pages/ItemListPage';
 import ContainerPage from './pages/ContainerPage';
 import DashboardPage from './pages/DashboardPage';
 import Navbar from './components/Navbar';
-import * as Constants from './constants';
+import * as Constants from './utility/constants';
 import { Layout } from 'antd';
 
 

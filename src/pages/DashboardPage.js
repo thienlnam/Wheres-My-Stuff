@@ -1,15 +1,43 @@
 import React, {useState} from 'react';
-import { Card, Col, Row, Button } from 'antd';
+import { Card, Button } from 'antd';
 import { PlayCircleOutlined, CloseOutlined, PauseCircleOutlined } from '@ant-design/icons';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
 
-
 function DashboardPage() {
-    const { transcript, resetTranscript } = useSpeechRecognition();
+    const commands = [
+      {
+          command: 'Where is (my) (the) *',
+          callback: (item) => setMessage(`The ${item} is located in the Garage, in the red storage box.`)
+      },
+      {
+        command: 'Where\'s (my) (the) *',
+        callback: (item) => setMessage(`The ${item} is located in the Garage, in the red storage box.`)
+      },
+      {
+        command: 'What items are (inside) (in) (the) *',
+        callback: (container) => setMessage(`Inside the ${container} is a Screwdriver, Sanded Plywood 5", and Sanded Plywood 10".`)
+      },
+      {
+          command: 'How many items are (there) in the *',
+          callback: (location) => setMessage(`There are 3 items in the ${location}`)
+      },
+      {
+          command: 'clear',
+          callback: ({ resetTranscript }) => ClearButtonClick()
+      }
+    ];
+
+    const { transcript, resetTranscript } = useSpeechRecognition({commands});
     const [ isListening, updateIsListening ] = useState(false);
+    const [ message, setMessage] = useState('');
 
     if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
         return null;
+    }
+
+    const ClearButtonClick = () => {
+      resetTranscript();
+      setMessage('');
     }
 
     const VoiceControlClick = () => {
@@ -29,31 +57,15 @@ function DashboardPage() {
         <Button onClick={VoiceControlClick} type={isListening ? "danger" : "primary"} icon={isListening ? <PauseCircleOutlined /> : <PlayCircleOutlined />}>
             {isListening ? "Stop" : "Start"}
         </Button>
-        <Button onClick={resetTranscript} className={"buttonLeftMargin"} icon={<CloseOutlined />}>
+        <Button onClick={ClearButtonClick} className={"buttonLeftMargin"} icon={<CloseOutlined />}>
             Clear
         </Button>
     </div>
-    <br/>
         {transcript}
     </Card>
-    <br/>
-    <Row gutter={16}>
-      <Col span={8}>
-        <Card title="Items low on quantity" bordered={false}>
-        content
-        </Card>
-      </Col>
-      <Col span={8}>
-        <Card title="Most used items" bordered={false}>
-           content
-        </Card>
-      </Col>
-      <Col span={8}>
-        <Card title="Most infrequently used items" bordered={false}>
-            content
-        </Card>
-      </Col>
-    </Row>
+    <Card>
+      {message}
+    </Card>
   </div>
 
   );
