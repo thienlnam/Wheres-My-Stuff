@@ -52,3 +52,14 @@ MySQL workbench is useful in executing queries and managing the database.
 To setup the database, download [mysql server](https://dev.mysql.com/downloads/mysql/) and create a new server and import the Schema.sql file for the database setup.
 
 For test data, import and run the sampleData sql file to execute the query.
+
+
+## Backend Server Setup
+
+The backend is an Express run Node server.
+
+To run the server, navigate into the api directory with `cd api`.
+
+From there run `npm install` to get all necessary dependencies
+
+Run `npm start` to start the server, which will be hosted at localhost:9000.
