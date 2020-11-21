@@ -9,51 +9,50 @@ var connection = mysql.createConnection({
 })
 
 
-var filterVal;
-
-function filterParts(table, criteria, filter, callback) {
+function filterParts(table, criteria, filter, context, callback) {
     var sql = "SELECT * FROM wmsinventory." + table + " WHERE " + criteria + "=" + filter;
     connection.query(sql, function (err, rows) {
         if (err) {
             throw err;
         }
-        filterVal = rows;
-        return callback(rows);
+        context.filter = rows;
+        return callback();
     });
 }
 
-filterParts("Parts", "name", "\"ScrewA\"", function (rows) {
-    filterVal = rows;
-    router.get('/filterParts', function (req, res, next) {
-        console.log(filterVal);
+router.get("/filterParts", function (req, res) {
+    console.log("Filtering parts");
+    var context = {};
+    var criteria = "name";
+    var filter = "\"Jackhammer\""
+    filterParts("Parts", criteria, filter, context, callback);
+    function callback() {
         res.setHeader('Content-Type', 'application/json');
-        res.status(200).send(JSON.stringify(filterVal));
-    });
-});
+        res.status(200).send(JSON.stringify(context.filter));
+    }
+})
 
 
-var partsVal;
-
-function getParts(table, callback) {
+function getParts(table, context, callback) {
     var sql = "SELECT * FROM wmsinventory." + table;
     connection.query(sql, function (err, rows) {
         if (err) {
             throw err;
         }
-        partsVal = rows;
-        return callback(rows);
+        context.parts = rows
+        callback();
     });
 }
 
-getParts("Parts", function (rows) {
-    partsVal = rows;
-    router.get('/getParts', function (req, res, next) {
-        console.log(partsVal);
+router.get("/getParts", function (req, res) {
+    console.log("Getting all parts");
+    var context = {};
+    getParts("Parts", context, callback);
+    function callback() {
         res.setHeader('Content-Type', 'application/json');
-        res.status(200).send(JSON.stringify(partsVal));
-    });
-
-});
+        res.status(200).send(JSON.stringify(context.parts));
+    }
+})
 
 
 /* GET home page. */
