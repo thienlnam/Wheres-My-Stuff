@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
 
 // ***PARTS Queries*** //
 function filterParts (table, criteria, filter, context, callback) {
-  let sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
+  const sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -22,7 +22,7 @@ function filterParts (table, criteria, filter, context, callback) {
 
 router.get('/filterParts', function (req, res) {
   console.log('Filtering parts')
-  let context = {}
+  const context = {}
   filterParts('Parts', 'name', '\'Jackhammer\'', context, callback)
   function callback () {
     res.setHeader('Content-Type', 'application/json')
@@ -31,7 +31,7 @@ router.get('/filterParts', function (req, res) {
 })
 
 function getParts (table, context, callback) {
-  let sql = 'SELECT * FROM wmsinventory.' + table
+  const sql = 'SELECT * FROM wmsinventory.' + table
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -43,7 +43,7 @@ function getParts (table, context, callback) {
 
 router.get('/getParts', function (req, res) {
   console.log('Getting all parts')
-  let context = {}
+  const context = {}
   getParts('Parts', context, callback)
   function callback () {
     res.setHeader('Content-Type', 'application/json')
@@ -52,7 +52,7 @@ router.get('/getParts', function (req, res) {
 })
 
 function createPart (name, category, quantity, location, callback) {
-  let sql = 'INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (' + name + ', ' + category + ', ' + quantity + ', ' + location + ')'
+  const sql = 'INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (' + name + ', ' + category + ', ' + quantity + ', ' + location + ')'
   connection.query(sql, function (err) {
     if (err) {
       throw err
@@ -71,7 +71,7 @@ createPart('\'Jackhammer\'', '\'hammer\'', '2', '\'garage\'', function () {
 })
 
 function deletePart (criteria, filter, callback) {
-  let sql = 'DELETE FROM WMSInventory.Parts WHERE ' + criteria + ' = ' + filter
+  const sql = 'DELETE FROM WMSInventory.Parts WHERE ' + criteria + ' = ' + filter
   connection.query(sql, function (err) {
     if (err) {
       throw err
@@ -91,6 +91,6 @@ deletePart('name', '\'ScrewA\'', function () {
 
 router.route('/')
   .get(function (req, res, next) {
-  res.send('API is working properly')
-})
+    res.send('API is working properly')
+  })
 module.exports = router

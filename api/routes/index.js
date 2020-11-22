@@ -8,8 +8,8 @@ const connection = mysql.createConnection({
   database: 'WMSInventory'
 })
 
-function filterParts(table, criteria, filter, context, callback) {
-  let sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
+function filterParts (table, criteria, filter, context, callback) {
+  const sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -21,7 +21,7 @@ function filterParts(table, criteria, filter, context, callback) {
 
 router.get('/filterParts', function (req, res) {
   console.log('Filtering parts')
-  let context = {}
+  const context = {}
   const criteria = 'name'
   const filter = '\'Jackhammer\''
   filterParts('Parts', criteria, filter, context, callback)
@@ -31,8 +31,8 @@ router.get('/filterParts', function (req, res) {
   }
 })
 
-function getParts(table, context, callback) {
-  let sql = 'SELECT * FROM wmsinventory.' + table
+function getParts (table, context, callback) {
+  const sql = 'SELECT * FROM wmsinventory.' + table
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -44,9 +44,9 @@ function getParts(table, context, callback) {
 
 router.get('/getParts', function (req, res) {
   console.log('Getting all parts')
-  var context = {}
+  const context = {}
   getParts('Parts', context, callback)
-  function callback() {
+  function callback () {
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify(context.parts))
   }
