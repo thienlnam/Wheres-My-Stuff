@@ -9,8 +9,8 @@ const connection = mysql.createConnection({
 })
 
 // ***PARTS Queries*** //
-function filterParts(table, criteria, filter, context, callback) {
-  var sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
+function filterParts (table, criteria, filter, context, callback) {
+  let sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -22,17 +22,16 @@ function filterParts(table, criteria, filter, context, callback) {
 
 router.get('/filterParts', function (req, res) {
   console.log('Filtering parts')
-  var context = {}
-  filterParts('Parts', 'name', '\"Jackhammer\"', context, callback)
-  function callback() {
+  let context = {}
+  filterParts('Parts', 'name', '\'Jackhammer\'', context, callback)
+  function callback () {
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify(context.filter))
   }
 })
 
-
-function getParts(table, context, callback) {
-  var sql = 'SELECT * FROM wmsinventory.' + table
+function getParts (table, context, callback) {
+  let sql = 'SELECT * FROM wmsinventory.' + table
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -44,17 +43,16 @@ function getParts(table, context, callback) {
 
 router.get('/getParts', function (req, res) {
   console.log('Getting all parts')
-  var context = {}
+  let context = {}
   getParts('Parts', context, callback)
-  function callback() {
+  function callback () {
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify(context.parts))
   }
 })
 
-
-function createPart( name, category, quantity, location, callback) {
-  var sql = 'INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (' + name + ', ' + category + ', ' + quantity + ', ' + location + ')'
+function createPart (name, category, quantity, location, callback) {
+  let sql = 'INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (' + name + ', ' + category + ', ' + quantity + ', ' + location + ')'
   connection.query(sql, function (err) {
     if (err) {
       throw err
@@ -63,18 +61,17 @@ function createPart( name, category, quantity, location, callback) {
   })
 }
 
-createPart('\"Jackhammer\"', '\"hammer\"', '2', '\"garage\"', function () {
+createPart('\'Jackhammer\'', '\'hammer\'', '2', '\'garage\'', function () {
   router.route('/createTestPart')
-  .post(function (req, res, next) {
-  console.log('Created Part\n')
-  res.setHeader('Content-Type', 'application/json')
-  res.status(200).send(JSON.stringify('Part was successfully added'))
-  })
+    .post(function (req, res, next) {
+      console.log('Created Part\n')
+      res.setHeader('Content-Type', 'application/json')
+      res.status(200).send(JSON.stringify('Part was successfully added'))
+    })
 })
 
-
-function deletePart(criteria, filter, callback) {
-  var sql = 'DELETE FROM WMSInventory.Parts WHERE ' + criteria + ' = ' + filter
+function deletePart (criteria, filter, callback) {
+  let sql = 'DELETE FROM WMSInventory.Parts WHERE ' + criteria + ' = ' + filter
   connection.query(sql, function (err) {
     if (err) {
       throw err
@@ -83,18 +80,17 @@ function deletePart(criteria, filter, callback) {
   })
 }
 
-deletePart('name', '\"ScrewA\"', function () {
+deletePart('name', '\'ScrewA\'', function () {
   router.route('/deleteTestPart')
-  .delete(function (req, res, next) {
-  console.log('Deleted Part\n')
-  res.setHeader('Content-Type', 'application/json')
-  res.status(200).send(JSON.stringify('Part was successfully deleted'))
-  })
+    .delete(function (req, res, next) {
+      console.log('Deleted Part\n')
+      res.setHeader('Content-Type', 'application/json')
+      res.status(200).send(JSON.stringify('Part was successfully deleted'))
+    })
 })
-
 
 router.route('/')
   .get(function (req, res, next) {
   res.send('API is working properly')
 })
-module.exports = router;
+module.exports = router

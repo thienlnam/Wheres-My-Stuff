@@ -8,9 +8,8 @@ const connection = mysql.createConnection({
   database: 'WMSInventory'
 })
 
-
 function filterParts(table, criteria, filter, context, callback) {
-  var sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
+  let sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -22,19 +21,18 @@ function filterParts(table, criteria, filter, context, callback) {
 
 router.get('/filterParts', function (req, res) {
   console.log('Filtering parts')
-  var context = {}
-  var criteria = 'name'
-  var filter = '\"Jackhammer\"'
+  let context = {}
+  const criteria = 'name'
+  const filter = '\'Jackhammer\''
   filterParts('Parts', criteria, filter, context, callback)
-  function callback() {
+  function callback () {
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify(context.filter))
   }
 })
 
-
 function getParts(table, context, callback) {
-  var sql = 'SELECT * FROM wmsinventory.' + table
+  let sql = 'SELECT * FROM wmsinventory.' + table
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
@@ -54,9 +52,8 @@ router.get('/getParts', function (req, res) {
   }
 })
 
-
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.render('index', { title: 'Express' })
 })
 

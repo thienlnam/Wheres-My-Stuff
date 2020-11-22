@@ -8,7 +8,7 @@ Capstone project for group 24
 
 ## Installation and local development
 
-To run this app locally, you'll need to have React installed.  Follow the steps to get it downloaded on [Windows] (https://makandracards.com/reactjs-quick/52419-install-reactjs-windows) or [Mac] (https://medium.com/@arunkrsoam/install-react-js-on-mac-7cffe8bda2ac).  
+To run this app locally, you'll need to have React installed.  Follow the steps to get it downloaded on [Windows](https://makandracards.com/reactjs-quick/52419-install-reactjs-windows) or [Mac](https://medium.com/@arunkrsoam/install-react-js-on-mac-7cffe8bda2ac).  
 
 After you've completed that, run `npm install` to install dependencies and then run `npm start` to bring up the app.  Saving changes should refresh the app automatically.
 
