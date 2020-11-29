@@ -1,92 +1,190 @@
 const express = require('express')
 const router = express.Router()
 const mysql = require('mysql')
+require('dotenv').config()
 const connection = mysql.createConnection({
   host: 'localhost',
-  user: 'master',
-  password: 'Wh3r3$MyStuff',
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
   database: 'WMSInventory'
 })
 
-// ***PARTS Queries*** //
-function filterParts (table, criteria, filter, context, callback) {
-  const sql = 'SELECT * FROM wmsinventory.' + table + ' WHERE ' + criteria + '=' + filter
+// ***Queries*** //
+function getItems(req, context, callback) {
+    let sql = mysql.format('SELECT * FROM wmsinventory.?', [
+        req.body.table
+    ])
+    sql = sql.replace(/['"]/g, '')
+    connection.query(sql, function (err, rows) {
+        if (err) {
+            throw err
+        }
+        context.parts = rows
+        callback()
+    })
+}
+
+function filterItems(req, context, callback) {  
+    let sql = mysql.format('SELECT * FROM wmsinventory.? WHERE ? = ?', [
+        req.body.table,
+        req.body.criteria,
+        req.body.filter
+    ])
+    for (let i = 0; i < 4; i++) {
+        sql = sql.replace(/["']/, '')
+    }
   connection.query(sql, function (err, rows) {
     if (err) {
       throw err
     }
     context.filter = rows
-    return callback()
+    callback()
   })
 }
 
-router.get('/filterParts', function (req, res) {
-  console.log('Filtering parts')
+function deleteItem(req, callback) {
+    let sql = mysql.format('DELETE FROM WMSInventory.? WHERE ? = ?', [
+        req.body.table,
+        req.body.criteria,
+        req.body.filter
+    ])
+    for (let i = 0; i < 4; i++) {
+        sql = sql.replace(/["']/, '')
+    }
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
+// ***CREATE Queries*** //
+function createPart(req, callback) {
+    let sql = mysql.format('INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (?, ?, ?, ?)', [
+        req.body.name,
+        req.body.category,
+        req.body.quantity,
+        req.body.location
+    ])
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
+function createContainer(req, callback) {
+    let sql = mysql.format('INSERT INTO wmsinventory.Containers (name, quantity, size, location, description) VALUES (?, ?, ?, ?, ?)', [
+        req.body.name,
+        req.body.quantity,
+        req.body.size,
+        req.body.location,
+        req.body.description
+    ])
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
+function createUser(req, callback) {
+    let sql = mysql.format('INSERT INTO wmsinventory.Users (username, password) VALUES (?, ?)', [
+        req.body.username,
+        req.body.password,
+    ])
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
+function createCategory(req, callback) {
+    let sql = mysql.format('INSERT INTO wmsinventory.Categories (name) VALUES (?)', [
+        req.body.name
+    ])
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
+// ***Test Routes*** //
+router.get('/getItems', function (req, res) {
+    console.log('Getting all ' + req.body.tables)
+    const context = {}
+    getItems(req, context, callback)
+    function callback() {
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(context.parts))
+    }
+})
+
+router.get('/filterItems', function (req, res) {
+  console.log("Filtering " + req.body.table)
   const context = {}
-  filterParts('Parts', 'name', '\'Jackhammer\'', context, callback)
+  filterItems(req, context, callback)
   function callback () {
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify(context.filter))
   }
 })
 
-function getParts (table, context, callback) {
-  const sql = 'SELECT * FROM wmsinventory.' + table
-  connection.query(sql, function (err, rows) {
-    if (err) {
-      throw err
+router.delete('/deleteItem', function (req, res) {
+    console.log('Deleting ' + req.body.table)
+    deleteItem(req, callback)
+    function callback() {
+        console.log('Deleted ' + req.body.filter)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.filter + ' was successfully deleted'))
     }
-    context.parts = rows
-    callback()
-  })
-}
-
-router.get('/getParts', function (req, res) {
-  console.log('Getting all parts')
-  const context = {}
-  getParts('Parts', context, callback)
-  function callback () {
-    res.setHeader('Content-Type', 'application/json')
-    res.status(200).send(JSON.stringify(context.parts))
-  }
 })
 
-function createPart (name, category, quantity, location, callback) {
-  const sql = 'INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (' + name + ', ' + category + ', ' + quantity + ', ' + location + ')'
-  connection.query(sql, function (err) {
-    if (err) {
-      throw err
+router.post('/createPart', function (req, res) {
+    console.log('Creating Part')
+    createPart(req, callback)
+    function callback() {
+        console.log('Created ' + req.body.name)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.name + ' was successfully added'))
     }
-    return callback()
-  })
-}
-
-createPart('\'Jackhammer\'', '\'hammer\'', '2', '\'garage\'', function () {
-  router.route('/createTestPart')
-    .post(function (req, res, next) {
-      console.log('Created Part\n')
-      res.setHeader('Content-Type', 'application/json')
-      res.status(200).send(JSON.stringify('Part was successfully added'))
-    })
 })
 
-function deletePart (criteria, filter, callback) {
-  const sql = 'DELETE FROM WMSInventory.Parts WHERE ' + criteria + ' = ' + filter
-  connection.query(sql, function (err) {
-    if (err) {
-      throw err
+router.post('/createContainer', function (req, res) {
+    console.log('Creating Container')
+    createContainer(req, callback)
+    function callback() {
+        console.log('Created ' + req.body.name)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.name + ' was successfully added'))
     }
-    return callback()
-  })
-}
+})
 
-deletePart('name', '\'ScrewA\'', function () {
-  router.route('/deleteTestPart')
-    .delete(function (req, res, next) {
-      console.log('Deleted Part\n')
-      res.setHeader('Content-Type', 'application/json')
-      res.status(200).send(JSON.stringify('Part was successfully deleted'))
-    })
+router.post('/createUser', function (req, res) {
+    console.log('Creating User')
+    createUser(req, callback)
+    function callback() {
+        console.log('Created User')
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify('User was successfully added'))
+    }
+})
+
+router.post('/createCategory', function (req, res) {
+    console.log('Creating Category')
+    createCategory(req, callback)
+    function callback() {
+        console.log('Created ' + req.body.name)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.name + ' was successfully added'))
+    }
 })
 
 router.route('/')

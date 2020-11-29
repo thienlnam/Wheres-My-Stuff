@@ -28,7 +28,7 @@ CREATE TABLE Categories (
 -- Create User table
 CREATE TABLE Users (
 	userID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	partID int,
+	partID int NULL,
 	username varchar(255) NOT NULL,
 	password varchar(255) NOT NULL
 );
@@ -36,7 +36,8 @@ CREATE TABLE Users (
 -- Create Container table
 CREATE TABLE Containers (
 	containerID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	partID int,
+	partID int NULL,
+	name varchar(255) NOT NULL,
 	quantity int DEFAULT NULL,
 	size int NOT NULL,
 	location varchar(255) NOT NULL,
