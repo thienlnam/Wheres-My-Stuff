@@ -94,7 +94,7 @@ function createContainer (req, callback) {
 function createUser (req, callback) {
   const sql = mysql.format('INSERT INTO wmsinventory.Users (username, password) VALUES (?, ?)', [
     req.body.username,
-    req.body.password,
+    req.body.password
   ])
   connection.query(sql, function (err) {
     if (err) {
