@@ -4,8 +4,6 @@ const logger = require('morgan')
 
 const indexRouter = require('./routes/index')
 const usersRouter = require('./routes/users')
-const testAPIRouter = require('./routes/testAPI')
-require('dotenv').config()
 
 const app = express()
 
@@ -16,6 +14,5 @@ app.use(cookieParser())
 
 app.use('/', indexRouter)
 app.use('/users', usersRouter)
-app.use('/testAPI', testAPIRouter)
 
 module.exports = app

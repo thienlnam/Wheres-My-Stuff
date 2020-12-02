@@ -12,6 +12,34 @@ To run this app locally, you'll need to have React installed.  Follow the steps 
 
 After you've completed that, run `npm install` to install dependencies and then run `npm start` to bring up the app.  Saving changes should refresh the app automatically.
 
+### Database Setup
+
+MySQL workbench is useful in executing queries and managing the database.
+
+When initializing the database, I had to select 'Use Legacy Password Encryption' to get it to work.
+
+To setup the database, download [mysql server](https://dev.mysql.com/downloads/mysql/) and create a new server and import the Schema.sql file for the database setup.
+
+For test data, import and run the sampleData sql file to execute the query.
+
+The sql files to run for setting up the database are located inside `/api/Database`
+
+### Setting up local configuration variables
+
+For storing secret passwords and configurations, we will be storing passwords and such in a .env file.  Create a .env file in the root directory of the project.  Copy over the variables from the .env.example and replace them with your local configuration settings.
+
+### Backend Server Setup
+
+The backend is an Express run Node server.
+
+To run the server, navigate into the api directory with `cd api`.
+
+From there run `npm install` to get all necessary dependencies
+
+Run `npm run dev` to start the development server, which will automatically refresh your changes after they get saved.
+
+Run `npm start` to start the server, which will be hosted at localhost:9000 or the port speciified in the .env file.
+
 ## Available Scripts
 
 In the project directory, you can run:
@@ -43,23 +71,3 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 ## Learn More
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-
-## Database Setup
-
-MySQL workbench is useful in executing queries and managing the database.
-
-To setup the database, download [mysql server](https://dev.mysql.com/downloads/mysql/) and create a new server and import the Schema.sql file for the database setup.
-
-For test data, import and run the sampleData sql file to execute the query.
-
-
-## Backend Server Setup
-
-The backend is an Express run Node server.
-
-To run the server, navigate into the api directory with `cd api`.
-
-From there run `npm install` to get all necessary dependencies
-
-Run `npm start` to start the server, which will be hosted at localhost:9000.
