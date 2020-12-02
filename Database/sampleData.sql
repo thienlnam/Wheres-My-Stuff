@@ -23,14 +23,14 @@ VALUES ("Hammer");
 
 
 -- Insert Example Container
-INSERT INTO Containers (partId, quantity, size, location, description)
-VALUES (1, 2, 15, "A1", "A1 container");
+INSERT INTO Containers (name, partId, quantity, size, location, description)
+VALUES ("Toolbox", 1, 2, 15, "A1", "A1 container");
 
-INSERT INTO Containers (partId, quantity, size, location)
-VALUES (2, 2, 15, "A1");
+INSERT INTO Containers (name, partId, quantity, size, location)
+VALUES ("Cardboard Box", 2, 2, 15, "A1");
 
-INSERT INTO Containers (partId, quantity, size, location, description)
-VALUES (2, 1, 25, "A2", "A2 container");
+INSERT INTO Containers (name, partId, quantity, size, location, description)
+VALUES ("Red Box", 2, 1, 25, "A2", "A2 container");
 
 -- Insert Example User
 INSERT INTO Users (username, password)
