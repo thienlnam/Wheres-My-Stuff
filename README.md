@@ -26,7 +26,7 @@ The sql files to run for setting up the database are located inside `/api/Databa
 
 ### Setting up local configuration variables
 
-For storing secret passwords and configurations, we will be storing passwords and such in a .env file.  Create a .env file in the root directory of the project.  Copy over the variables from the .env.example and replace them with your local configuration settings.
+For storing secret passwords and configurations, we will be storing them in a .env file.  Create a .env file in the root directory of the project.  Copy over the variables from the .env.example and replace them with your local configuration settings.
 
 ### Backend Server Setup
 
