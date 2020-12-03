@@ -1,6 +1,6 @@
 import React from 'react';
 import {Menu} from 'antd';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import {UnorderedListOutlined, CodeSandboxOutlined, DashboardOutlined} from '@ant-design/icons';
 import * as Constants from '../utility/constants';
 
