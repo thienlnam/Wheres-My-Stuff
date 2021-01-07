@@ -22,14 +22,14 @@ CREATE TABLE Parts (
 -- Create Category table
 CREATE TABLE Categories (
 	categoryID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name varchar(255) NOT NULL
+	name varchar(255) UNIQUE NOT NULL
 );
 
 -- Create User table
 CREATE TABLE Users (
 	userID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	partID int NULL,
-	username varchar(255) NOT NULL,
+	username varchar(255) UNIQUE NOT NULL,
 	password varchar(255) NOT NULL
 );
 
@@ -37,7 +37,7 @@ CREATE TABLE Users (
 CREATE TABLE Containers (
 	containerID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	partID int NULL,
-	name varchar(255) NOT NULL,
+	name varchar(255) UNIQUE NOT NULL,
 	quantity int DEFAULT NULL,
 	size int NOT NULL,
 	location varchar(255) NOT NULL,

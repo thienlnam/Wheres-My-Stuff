@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, {forwardRef} from 'react';
 import MaterialTable from 'material-table';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
@@ -38,13 +38,13 @@ const tableIcons = {
 
 function Table(props) {
     return (
-      <div style={{ maxWidth: '100%' }}>
-        <MaterialTable
-          icons={tableIcons}
-          {...props}
-        />
-      </div>
+        <div style={{maxWidth: '100%'}}>
+            <MaterialTable
+                icons={tableIcons}
+                {...props}
+            />
+        </div>
     );
-  }
-  
-  export default Table;
+}
+
+export default Table;

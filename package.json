@@ -20,7 +20,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "style": "./node_modules/.bin/eslint \"**/*.js\""
+    "style": "./node_modules/.bin/eslint . --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -37,5 +37,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^7.14.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-plugin-react": "^7.21.5"
+  }
 }
