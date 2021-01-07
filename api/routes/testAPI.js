@@ -59,6 +59,65 @@ function deleteItem (req, callback) {
   })
 }
 
+// ***UPDATE Quantity Queries*** //
+function incrementPart (req, callback) {
+  let sql = mysql.format('UPDATE wmsinventory.Parts SET partQuantity = partQuantity + ? WHERE name = ?', [
+    req.body.partQuantity,
+    req.body.name
+  ])
+    for (let i = 0; i < 2; i++) {
+        sql = sql.replace(/["']/, '')
+    }
+  connection.query(sql, function (err) {
+    if (err) {
+      throw err
+    }
+    callback()
+  })
+}
+
+function decrementPart(req, callback) {
+    let sql = mysql.format('UPDATE wmsinventory.Parts SET partQuantity = partQuantity - ? WHERE name = ? AND partQuantity > 0', [
+        req.body.partQuantity,
+        req.body.name
+    ])
+    for (let i = 0; i < 2; i++) {
+        sql = sql.replace(/["']/, '')
+    }
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
+function incrementContainerPart(req, callback) {
+    const sql = mysql.format('UPDATE wmsinventory.Containers SET quantity = quantity + ? WHERE name = ?', [
+        req.body.quantity,
+        req.body.name
+    ])
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
+function decrementContainerPart(req, callback) {
+    const sql = mysql.format('UPDATE wmsinventory.Containers SET quantity = quantity - ? WHERE name = ? AND quantity > 0', [
+        req.body.quantity,
+        req.body.name
+    ])
+    connection.query(sql, function (err) {
+        if (err) {
+            throw err
+        }
+        callback()
+    })
+}
+
 // ***CREATE Queries*** //
 function createPart (req, callback) {
   const sql = mysql.format('INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (?, ?, ?, ?)', [
@@ -145,6 +204,46 @@ router.delete('/deleteItem', function (req, res) {
     res.setHeader('Content-Type', 'application/json')
     res.status(200).send(JSON.stringify(req.body.filter + ' was successfully deleted'))
   }
+})
+
+router.post('/incrementPart', function (req, res) {
+    console.log('Incrementing ' + req.body.name)
+    incrementPart(req, callback)
+    function callback () {
+        console.log('Incremented ' + req.body.name)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.name + ' was successfully incremented'))
+    }
+})
+
+router.post('/decrementPart', function (req, res) {
+    console.log('Decrementing ' + req.body.name)
+    decrementPart(req, callback)
+    function callback() {
+        console.log('Decremented ' + req.body.name)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.name + ' was successfully decremented'))
+    }
+})
+
+router.post('/incrementContainer', function (req, res) {
+    console.log('Incrementing ' + req.body.name)
+    incrementContainerPart(req, callback)
+    function callback() {
+        console.log('Incremented ' + req.body.name)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.name + ' was successfully incremented'))
+    }
+})
+
+router.post('/decrementContainer', function (req, res) {
+    console.log('Decrementing ' + req.body.name)
+    decrementContainerPart(req, callback)
+    function callback() {
+        console.log('Decremented ' + req.body.name)
+        res.setHeader('Content-Type', 'application/json')
+        res.status(200).send(JSON.stringify(req.body.name + ' was successfully decremented'))
+    }
 })
 
 router.post('/createPart', function (req, res) {
