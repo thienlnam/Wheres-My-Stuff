@@ -93,16 +93,16 @@ function incrementPart(req, callback) {
     let sql = mysql.format('UPDATE wmsinventory.Parts SET partQuantity = partQuantity + ? WHERE name = ?', [
         req.body.partQuantity,
         req.body.name,
-    ])
+    ]);
     for (let i = 0; i < 2; i++) {
         sql = sql.replace(/["']/, '');
     }
     connection.query(sql, function(err) {
         if (err) {
-            throw err;
+            callback(err);
         }
-        callback();
-    })
+        callback(null);
+    });
 }
 
 /**
@@ -115,16 +115,16 @@ function decrementPart(req, callback) {
     let sql = mysql.format('UPDATE wmsinventory.Parts SET partQuantity = partQuantity - ? WHERE name = ? AND partQuantity > 0', [
         req.body.partQuantity,
         req.body.name,
-    ])
+    ]);
     for (let i = 0; i < 2; i++) {
         sql = sql.replace(/["']/, '');
     }
     connection.query(sql, function(err) {
         if (err) {
-            throw err;
+            callback(err);
         }
-        callback();
-    })
+        callback(null);
+    });
 }
 
 /**
@@ -137,13 +137,13 @@ function incrementContainerPart(req, callback) {
     const sql = mysql.format('UPDATE wmsinventory.Containers SET quantity = quantity + ? WHERE name = ?', [
         req.body.quantity,
         req.body.name,
-    ])
+    ]);
     connection.query(sql, function(err) {
         if (err) {
-            throw err;
+            callback(err);
         }
-        callback();
-    })
+        callback(null);
+    });
 }
 
 /**
@@ -156,13 +156,13 @@ function decrementContainerPart(req, callback) {
     const sql = mysql.format('UPDATE wmsinventory.Containers SET quantity = quantity - ? WHERE name = ? AND quantity > 0', [
         req.body.quantity,
         req.body.name,
-    ])
+    ]);
     connection.query(sql, function(err) {
         if (err) {
-            throw err;
+            callback(err);
         }
-        callback();
-    })
+        callback(null);
+    });
 }
 
 /**
@@ -250,6 +250,112 @@ function createCategory(req, callback) {
     });
 }
 
+/**
+ * Update aspects of a Table based on the name and returns updated object
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+//Bug when updating name and printing updated object
+function updateItem(req, callback) {
+    let sql = mysql.format('UPDATE wmsinventory.? SET ? = ? WHERE name = ?', [
+        req.body.table,
+        req.body.column,
+        req.body.value,
+        req.body.name,
+    ]);
+    let sql1 = mysql.format('SELECT * FROM wmsinventory.? WHERE name = ?', [
+        req.body.table,
+        req.body.name,
+    ]);
+    for (let i = 0; i < 4; i++) {
+        sql = sql.replace(/["']/, '');
+    }
+    for (let j = 0; j < 2; j++) {
+        sql1 = sql1.replace(/["']/, '');
+    }
+    connection.query(sql, function (err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            connection.query(sql1, function (err, result) {
+                if (err) {
+                    callback(err, null);
+                } else {
+                    callback(null, result);
+                }
+            });
+        }
+    });
+}
+
+/**
+ * Add a Part to a Container
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+function addPart(req, callback) {
+    let sql = mysql.format('UPDATE wmsinventory.Containers SET partID = (SELECT partID FROM wmsinventory.Parts WHERE name = ?), quantity = (SELECT partQuantity FROM wmsinventory.Parts WHERE name = ?) WHERE name = ? AND partID = null', [
+        req.body.partName,
+        req.body.partName,
+        req.body.name,
+    ]);
+    connection.query(sql, function (err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, result);
+        }
+    });
+}
+
+//TODO: delete part from a container
+//TODO: Check for duplicates and update amount of part given amount
+/**
+ * Check for duplicate Parts before modifying the quantity
+ * 
+ * @param {*} req
+ * @param {*} callback
+ */
+function checkDuplicates(req, callback) {
+    let sql = mysql.format('SELECT name FROM wmsinventory.Parts WHERE name = ?', [
+        req.body.name,
+    ]);
+    connection.query(sql, function (err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, result);
+        }
+    });
+}
+
+//TODO: Check for duplicates and update amount of part given amount
+/**
+ * Get the quantity of parts from either the Container or Part and update by desired amount
+ * 
+ * @param {*} req
+ * @param {*} callback
+ */
+function updateQuantity(req, callback) {
+    let sql = mysql.format('SELECT ? FROM wmsinventory.? WHERE name = ? OR partID = (SELECT partID FROM wmsinventory.Parts WHERE name = ?)', [
+        req.body.quantityType,
+        req.body.table,
+        req.body.name,
+        req.body.name,
+    ]);
+    for (let i = 0; i < 4; i++) {
+        sql = sql.replace(/["']/, '');
+    }
+    connection.query(sql, function (err) {
+        if (err) {
+            callback(err);
+        }
+        callback(null);
+    });
+}
+
 router.get('/getItems', function(req, res) {
     console.log('Getting all ' + req.body.table);
     getItems(req, callback);
@@ -296,14 +402,14 @@ router.delete('/deleteItem', function(req, res) {
     }
 });
 
-router.post('/incrementPart', function(req, res) {
+router.patch('/incrementPart', function(req, res) {
     console.log('Incrementing ' + req.body.name);
     incrementPart(req, callback);
-    function callback() {
+    function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             console.log('Incremented ' + req.body.name);
             res.setHeader('Content-Type', 'application/json');
@@ -312,14 +418,14 @@ router.post('/incrementPart', function(req, res) {
     }
 });
 
-router.post('/decrementPart', function(req, res) {
+router.patch('/decrementPart', function(req, res) {
     console.log('Decrementing ' + req.body.name);
     decrementPart(req, callback);
-    function callback() {
+    function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             console.log('Decremented ' + req.body.name);
             res.setHeader('Content-Type', 'application/json');
@@ -328,14 +434,14 @@ router.post('/decrementPart', function(req, res) {
     }
 });
 
-router.post('/incrementContainer', function(req, res) {
+router.patch('/incrementContainer', function(req, res) {
     console.log('Incrementing ' + req.body.name);
     incrementContainerPart(req, callback);
-    function callback() {
+    function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             console.log('Incremented ' + req.body.name);
             res.setHeader('Content-Type', 'application/json');
@@ -344,14 +450,14 @@ router.post('/incrementContainer', function(req, res) {
     }
 });
 
-router.post('/decrementContainer', function(req, res) {
+router.patch('/decrementContainer', function(req, res) {
     console.log('Decrementing ' + req.body.name);
     decrementContainerPart(req, callback);
-    function callback() {
+    function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             console.log('Decremented ' + req.body.name);
             res.setHeader('Content-Type', 'application/json');
@@ -436,6 +542,56 @@ router.post('/createCategory', function(req, res) {
                 id: data.insertId,
                 name: req.body.name,
             });
+        }
+    }
+});
+
+router.patch('/updateItem', function(req, res) {
+    console.log('Updating ' + req.body.table);
+    updateItem(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({ status: err.status, message: err.message });
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(201).json({data});
+        }
+    }
+});
+
+router.patch('/addPart', function (req, res) {
+    console.log('Adding ' + req.body.partName + " to " + req.body.name);
+    addPart(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({ status: err.status, message: err.message });
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(201).json({ data });
+        }
+    }
+});
+
+router.get('/checkDup', function (req, res) {
+    checkDuplicates(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({ status: err.status, message: err.message });
+        } else {
+            console.log(data);
+            if ([].name == "ScrewA") {
+
+            } else {
+                console.log("Duplicates found")
+                res.setHeader('Content-Type', 'application/json');
+                res.status(201).json({ data });
+            }
         }
     }
 });
