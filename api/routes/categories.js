@@ -13,16 +13,14 @@ const connection = mysql.createConnection({
 });
 
 /**
- * Creates a user in the users table
+ * Creates a new category
  *
  * @param {*} req
  * @param {*} callback
  */
-function createUser(req, callback) {
-    // TODO: Either encrypt password OR use a different oauth provider
-    const sql = mysql.format('INSERT INTO wmsinventory.Users (username, password) VALUES (?, ?)', [
-        req.body.username,
-        req.body.password,
+function createCategory(req, callback) {
+    const sql = mysql.format('INSERT INTO wmsinventory.Categories (name) VALUES (?)', [
+        req.body.name,
     ]);
     connection.query(sql, function (err, result) {
         if (err) {
@@ -34,19 +32,20 @@ function createUser(req, callback) {
 }
 
 /**
- * Gets all Users
+ * Gets all Categories
  *
  * @param {*} req
  * @param {*} callback
  */
-function getUsers(req, callback) {
+function getCategories(req, callback) {
     let sql;
     if (req.params == "") {
         console.log(req.params);
-        sql = mysql.format('SELECT * FROM wmsinventory.Users WHERE ? = ?', [req.params.filter, req.params.name]);
+        sql = mysql.format('SELECT * FROM wmsinventory.Categories WHERE ? = ?', [req.params.filter, req.params.name]);
     } else {
-        sql = mysql.format('SELECT * FROM wmsinventory.Users');
+        sql = mysql.format('SELECT * FROM wmsinventory.Categories');
     }
+    console.log(sql);
     connection.query(sql, function (err, result) {
         if (err) {
             callback(err, null);
@@ -57,21 +56,19 @@ function getUsers(req, callback) {
 }
 
 /**
- * Update aspects of a User based on the name and returns updated object
+ * Update aspects of a Category based on the name and returns updated Part
  *
  * @param {*} req
  * @param {*} callback
  */
 //Bug when updating name and printing updated object
-function updateUser(req, callback) {
-    let sql = mysql.format('UPDATE wmsinventory.Users SET ? = ? WHERE username = ?', [
+function updateCategory(req, callback) {
+    let sql = mysql.format('UPDATE wmsinventory.Categories SET ? = ? WHERE name = ?', [
         req.body.column,
         req.body.value,
         req.body.name,
     ]);
-    //Printing may be bugged
-    let sql1 = mysql.format('SELECT * FROM wmsinventory.Users WHERE username = ?', [
-        req.body.table,
+    let sql1 = mysql.format('SELECT * FROM wmsinventory.Categories WHERE name = ?', [
         req.body.name,
     ]);
     for (let i = 0; i < 2; i++) {
@@ -93,15 +90,15 @@ function updateUser(req, callback) {
 }
 
 /**
- * Deletes a User along with the filter and criteria
+ * Deletes an Category along with the filter and criteria
  *
  * @param {*} req
  * @param {*} callback
  */
-function deleteUser(req, callback) {
+function deleteCategory(req, callback) {
     // TODO: Add check if item exists
     // TODO: Delete if exists otherwise give error code and message
-    let sql = mysql.format('DELETE FROM WMSInventory.Users WHERE ? = ?', [
+    let sql = mysql.format('DELETE FROM WMSInventory.Categories WHERE ? = ?', [
         req.body.criteria,
         req.body.filter,
     ]);
@@ -117,9 +114,10 @@ function deleteUser(req, callback) {
     });
 }
 
+
 router.post('/', function (req, res) {
-    console.log('Creating User');
-    createUser(req, callback);
+    console.log('Creating Category');
+    createCategory(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
@@ -129,15 +127,15 @@ router.post('/', function (req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json({
                 id: data.insertId,
-                username: req.body.username,
+                name: req.body.name,
             });
         }
     }
 });
 
 router.get('/', function (req, res) {
-    console.log('Getting Users');
-    getUsers(req, callback);
+    console.log('Getting all Categories');
+    getCategories(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
@@ -151,8 +149,8 @@ router.get('/', function (req, res) {
 });
 
 router.patch('/', function (req, res) {
-    console.log('Updating User');
-    updateUser(req, callback);
+    console.log('Updating Category');
+    updateCategory(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
@@ -166,8 +164,8 @@ router.patch('/', function (req, res) {
 });
 
 router.delete('/', function (req, res) {
-    console.log('Deleting User');
-    deleteUser(req, callback);
+    console.log('Deleting Category');
+    deleteCategory(req, callback);
     function callback(err) {
         if (err) {
             console.log(err);
@@ -179,6 +177,5 @@ router.delete('/', function (req, res) {
         }
     }
 });
-
 
 module.exports = router;
