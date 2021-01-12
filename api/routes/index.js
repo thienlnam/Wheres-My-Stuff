@@ -296,10 +296,42 @@ function updateItem(req, callback) {
  * @param {*} callback
  */
 function addPart(req, callback) {
-    let sql = mysql.format('UPDATE wmsinventory.Containers SET partID = (SELECT partID FROM wmsinventory.Parts WHERE name = ?), quantity = (SELECT partQuantity FROM wmsinventory.Parts WHERE name = ?) WHERE name = ? AND partID = null', [
+    let sql = mysql.format('UPDATE wmsinventory.Containers SET partID = (SELECT partID FROM wmsinventory.Parts WHERE name = ?), quantity = (SELECT partQuantity FROM wmsinventory.Parts WHERE name = ?) WHERE name = ? AND partID IS NULL', [
         req.body.partName,
         req.body.partName,
         req.body.name,
+    ]);
+    let sql1 = mysql.format('UPDATE wmsinventory.Parts SET partLocation = (SELECT DISTINCT name FROM wmsinventory.Containers WHERE name = ?) WHERE name = ?', [
+        req.body.name,
+        req.body.partName,
+    ]);
+    connection.query(sql, function (err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            connection.query(sql1, function (err, result) {
+                if (err) {
+                    callback(err, null);
+                } else {
+                    callback(null, result);
+                }
+            });
+        }
+    });
+}
+
+/**
+ * Remove a Part to a Container
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+//Should Part become 'Loose'? Or go to area container is in?
+function removePart(req, callback) {
+    let sql = mysql.format('UPDATE wmsinventory.Containers c INNER JOIN wmsinventory.Parts p ON (c.partID = p.partID) SET c.partID = null, c.quantity = 0, p.partLocation = c.location WHERE c.name = ? AND c.partID = p.partID', [
+        req.body.name,
+        req.body.name,
+        req.body.partName,
     ]);
     connection.query(sql, function (err, result) {
         if (err) {
@@ -310,23 +342,22 @@ function addPart(req, callback) {
     });
 }
 
-//TODO: delete part from a container
-//TODO: Check for duplicates and update amount of part given amount
 /**
  * Check for duplicate Parts before modifying the quantity
  * 
  * @param {*} req
  * @param {*} callback
  */
-function checkDuplicates(req, callback) {
+function checkDuplicates(name, callback) {
     let sql = mysql.format('SELECT name FROM wmsinventory.Parts WHERE name = ?', [
-        req.body.name,
+        name,
     ]);
     connection.query(sql, function (err, result) {
         if (err) {
-            callback(err, null);
+            return err;
         } else {
-            callback(null, result);
+            //Call function to inform user?
+            return result;
         }
     });
 }
@@ -348,13 +379,29 @@ function updateQuantity(req, callback) {
     for (let i = 0; i < 4; i++) {
         sql = sql.replace(/["']/, '');
     }
-    connection.query(sql, function (err) {
+    connection.query(sql, function (err, results) {
         if (err) {
-            callback(err);
+            callback(err, null);
+        } else {
+            console.log(results.partQuantity);
+            callback(null, results);
         }
-        callback(null);
     });
 }
+
+router.get('/incParts', function (req, res) {
+    updateQuantity(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({ status: err.status, message: err.message });
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json(data);
+        }
+    }
+});
 
 router.get('/getItems', function(req, res) {
     console.log('Getting all ' + req.body.table);
@@ -466,7 +513,6 @@ router.patch('/decrementContainer', function(req, res) {
     }
 });
 
-
 router.post('/createPart', function(req, res) {
     console.log('Creating Part');
     createPart(req, callback);
@@ -553,7 +599,7 @@ router.patch('/updateItem', function(req, res) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json({data});
@@ -568,30 +614,25 @@ router.patch('/addPart', function (req, res) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
-            res.status(201).json({ data });
+            res.status(201).send("Added " + req.body.partName + " to " + req.body.name);
         }
     }
 });
 
-router.get('/checkDup', function (req, res) {
-    checkDuplicates(req, callback);
+router.patch('/removePart', function (req, res) {
+    console.log('Removing ' + req.body.partName + " from " + req.body.name);
+    removePart(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
-            console.log(data);
-            if ([].name == "ScrewA") {
-
-            } else {
-                console.log("Duplicates found")
-                res.setHeader('Content-Type', 'application/json');
-                res.status(201).json({ data });
-            }
+            res.setHeader('Content-Type', 'application/json');
+            res.status(201).send("Removed " + req.body.partName + " from " + req.body.name);
         }
     }
 });
