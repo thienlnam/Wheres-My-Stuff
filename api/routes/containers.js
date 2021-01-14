@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({path: '../.env'});
 
 const express = require('express');
 const router = express.Router();
@@ -26,7 +26,7 @@ function createContainer(req, callback) {
         req.body.location,
         req.body.description,
     ]);
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -43,14 +43,15 @@ function createContainer(req, callback) {
  */
 function getContainers(req, callback) {
     let sql;
-    if (req.params == "") {
-        console.log(req.params);
-        sql = mysql.format('SELECT * FROM wmsinventory.Containers WHERE ? = ?', [req.params.filter, req.params.name]);
+    if (Object.keys(req.query).length != 0) {
+        sql = mysql.format('SELECT * FROM wmsinventory.Containers WHERE ? = ?', [req.query.filter, req.query.name]);
+        for (let i = 0; i < 2; i++) {
+            sql = sql.replace(/["']/, '');
+        }
     } else {
         sql = mysql.format('SELECT * FROM wmsinventory.Containers');
     }
-    console.log(sql);
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -65,24 +66,24 @@ function getContainers(req, callback) {
  * @param {*} req
  * @param {*} callback
  */
-//Bug when updating name and printing updated object
+// Bug when updating name and printing updated object
 function updateContainer(req, callback) {
     let sql = mysql.format('UPDATE wmsinventory.Containers SET ? = ? WHERE name = ?', [
         req.body.column,
         req.body.value,
         req.body.name,
     ]);
-    let sql1 = mysql.format('SELECT * FROM wmsinventory.Containers WHERE name = ?', [
+    const sql1 = mysql.format('SELECT * FROM wmsinventory.Containers WHERE name = ?', [
         req.body.name,
     ]);
     for (let i = 0; i < 2; i++) {
         sql = sql.replace(/["']/, '');
     }
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
-            connection.query(sql1, function (err, result) {
+            connection.query(sql1, function(err, result) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -109,7 +110,7 @@ function deleteContainer(req, callback) {
     for (let i = 0; i < 2; i++) {
         sql = sql.replace(/["']/, '');
     }
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -119,14 +120,14 @@ function deleteContainer(req, callback) {
 }
 
 
-router.post('/', function (req, res) {
+router.post('/', function(req, res) {
     console.log('Creating Container');
     createContainer(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json({
@@ -141,14 +142,14 @@ router.post('/', function (req, res) {
     }
 });
 
-router.get('/', function (req, res) {
+router.get('/', function(req, res) {
     console.log('Getting all Containers');
     getContainers(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json(data);
@@ -156,14 +157,14 @@ router.get('/', function (req, res) {
     }
 });
 
-router.patch('/', function (req, res) {
+router.patch('/', function(req, res) {
     console.log('Updating Container');
     updateContainer(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json({ data });
@@ -171,14 +172,14 @@ router.patch('/', function (req, res) {
     }
 });
 
-router.delete('/', function (req, res) {
+router.delete('/', function(req, res) {
     console.log('Deleting Container');
     deleteContainer(req, callback);
     function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(204).json();
