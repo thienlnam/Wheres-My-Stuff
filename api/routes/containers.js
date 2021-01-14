@@ -167,7 +167,7 @@ router.patch('/', function(req, res) {
             res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
-            res.status(201).json({ data });
+            res.status(201).json({data});
         }
     }
 });

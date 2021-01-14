@@ -71,7 +71,7 @@ function removePart(req, callback) {
  * @param {*} req
  * @param {*} callback
  */
-function checkDuplicates(req, callback) {
+/**function checkDuplicates(req, callback) {
     const sql = mysql.format('SELECT name FROM wmsinventory.Parts WHERE name = ?', [
         req,
     ]);
@@ -83,12 +83,12 @@ function checkDuplicates(req, callback) {
             return result;
         }
     });
-}
+}*/
 
 router.patch('/addPart', function(req, res) {
     console.log('Adding ' + req.body.partName + ' to ' + req.body.name);
     addPart(req, callback);
-    function callback(err, data) {
+    function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
@@ -103,7 +103,7 @@ router.patch('/addPart', function(req, res) {
 router.patch('/removePart', function(req, res) {
     console.log('Removing ' + req.body.partName + ' from ' + req.body.name);
     removePart(req, callback);
-    function callback(err, data) {
+    function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
