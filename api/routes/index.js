@@ -71,7 +71,7 @@ function removePart(req, callback) {
  * @param {*} req
  * @param {*} callback
  */
-/**function checkDuplicates(req, callback) {
+/* function checkDuplicates(req, callback) {
     const sql = mysql.format('SELECT name FROM wmsinventory.Parts WHERE name = ?', [
         req,
     ]);
