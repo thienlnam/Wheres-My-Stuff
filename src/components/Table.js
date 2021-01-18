@@ -36,7 +36,7 @@ const tableIcons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-function Table(props) {
+const Table = (props) => {
     return (
         <div style={{maxWidth: '100%'}}>
             <MaterialTable
@@ -45,6 +45,6 @@ function Table(props) {
             />
         </div>
     );
-}
+};
 
 export default Table;

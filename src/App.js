@@ -6,7 +6,12 @@ import DashboardPage from './pages/DashboardPage';
 import Navbar from './components/Navbar';
 import * as Constants from './utility/constants';
 import {Layout} from 'antd';
+import {
+    QueryClient,
+    QueryClientProvider,
+} from 'react-query';
 
+const queryClient = new QueryClient();
 
 function App() {
     const {Header, Content, Footer} = Layout;
@@ -23,17 +28,19 @@ function App() {
     }
 
     return (
-        <Layout className="layout">
-            <Header>
-                <Navbar currentPage={currentPage} changePage={setPage} />
-            </Header>
-            <Content style={{padding: '0 50px'}}>
-                <div className="site-layout-content">
-                    {pageShown}
-                </div>
-            </Content>
-            <Footer style={{textAlign: 'center'}}>Capstone CS Team 24 ©2020</Footer>
-        </Layout>
+        <QueryClientProvider client={queryClient}>
+            <Layout className="layout">
+                <Header>
+                    <Navbar currentPage={currentPage} changePage={setPage} />
+                </Header>
+                <Content style={{padding: '0 50px'}}>
+                    <div className="site-layout-content">
+                        {pageShown}
+                    </div>
+                </Content>
+                <Footer style={{textAlign: 'center'}}>Capstone CS Team 24 ©2020</Footer>
+            </Layout>
+        </QueryClientProvider>
     );
 }
 

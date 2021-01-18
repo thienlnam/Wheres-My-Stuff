@@ -1,22 +1,33 @@
 import React from 'react';
+import axios from 'axios';
 import Table from '../components/Table';
+import {useQuery} from 'react-query';
 
-import {sampleItemData} from '../sampleData';
+const getParts = async () => {
+    const {data} = await axios.request({
+        method: 'GET',
+        url: 'http://localhost:9000/Parts',
+    });
+    return data;
+};
 
-function ItemListPage() {
+const ItemListPage = () => {
+    const {data} = useQuery('parts', getParts);
     return (
-        <Table
-            columns={[
-                {title: 'Name', field: 'name'},
-                {title: 'Category', field: 'category'},
-                {title: 'Container', field: 'container'},
-                {title: 'Location', field: 'location'},
-                {title: 'Quantity', field: 'quantity'},
-            ]}
-            data={sampleItemData}
-            title={'Item List'}
-        />
+        <div>
+            <Table
+                columns={[
+                    {title: 'Name', field: 'name'},
+                    {title: 'Category', field: 'category'},
+                    {title: 'Container', field: 'container'},
+                    {title: 'Location', field: 'partLocation'},
+                    {title: 'Quantity', field: 'partQuantity'},
+                ]}
+                data={data}
+                title={'Item List'}
+            />
+        </div>
     );
-}
+};
 
 export default ItemListPage;

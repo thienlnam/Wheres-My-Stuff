@@ -3,7 +3,7 @@ import {Card, Button} from 'antd';
 import {PlayCircleOutlined, CloseOutlined, PauseCircleOutlined} from '@ant-design/icons';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 
-function DashboardPage() {
+const DashboardPage = () => {
     const commands = [
         {
             command: 'Where is (my) (the) *',
@@ -23,7 +23,7 @@ function DashboardPage() {
         },
         {
             command: 'clear',
-            callback: ({resetTranscript}) => ClearButtonClick(),
+            callback: ({resetTranscript}) => clearButtonClick(),
         },
     ];
 
@@ -35,7 +35,7 @@ function DashboardPage() {
         return null;
     }
 
-    const ClearButtonClick = () => {
+    const clearButtonClick = () => {
         resetTranscript();
         setMessage('');
     };
@@ -54,10 +54,14 @@ function DashboardPage() {
         <div className="site-card-wrapper">
             <Card title="Voice Control" bordered={false}>
                 <div style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button onClick={VoiceControlClick} type={isListening ? 'danger' : 'primary'} icon={isListening ? <PauseCircleOutlined /> : <PlayCircleOutlined />}>
+                    <Button
+                        onClick={VoiceControlClick}
+                        type={isListening ? 'danger' : 'primary'}
+                        icon={isListening ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+                    >
                         {isListening ? 'Stop' : 'Start'}
                     </Button>
-                    <Button onClick={ClearButtonClick} className={'buttonLeftMargin'} icon={<CloseOutlined />}>
+                    <Button onClick={clearButtonClick} className={'buttonLeftMargin'} icon={<CloseOutlined />}>
             Clear
                     </Button>
                 </div>
@@ -69,6 +73,6 @@ function DashboardPage() {
         </div>
 
     );
-}
+};
 
 export default DashboardPage;
