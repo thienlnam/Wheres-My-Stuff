@@ -15,8 +15,8 @@ const Navbar = (props) => {
                 <Menu.Item key={Constants.HEADER_DASHBOARD} icon={<DashboardOutlined />}>
             Dashboard
                 </Menu.Item>
-                <Menu.Item key={Constants.HEADER_ITEMLIST} icon={<UnorderedListOutlined />}>
-            Item List
+                <Menu.Item key={Constants.HEADER_PARTSLIST} icon={<UnorderedListOutlined />}>
+            Parts List
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_CONTAINER} icon={<CodeSandboxOutlined />}>
             Containers

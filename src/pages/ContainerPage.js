@@ -27,6 +27,6 @@ const ContainerPage = () => {
             title={'Container List'}
         />
     );
-}
+};
 
 export default ContainerPage;

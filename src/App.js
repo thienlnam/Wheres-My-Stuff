@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import 'antd/dist/antd.css';
-import ItemListPage from './pages/ItemListPage';
+import PartListPage from './pages/PartListPage';
 import ContainerPage from './pages/ContainerPage';
 import DashboardPage from './pages/DashboardPage';
 import Navbar from './components/Navbar';
@@ -19,8 +19,8 @@ function App() {
     const [currentPage, setPage] = useState(Constants.HEADER_DASHBOARD);
 
     let pageShown;
-    if (currentPage === Constants.HEADER_ITEMLIST) {
-        pageShown = <ItemListPage />;
+    if (currentPage === Constants.HEADER_PARTSLIST) {
+        pageShown = <PartListPage />;
     } else if (currentPage === Constants.HEADER_CONTAINER) {
         pageShown = <ContainerPage />;
     } else if (currentPage === Constants.HEADER_DASHBOARD) {

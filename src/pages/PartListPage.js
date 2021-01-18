@@ -11,7 +11,7 @@ const getParts = async () => {
     return data;
 };
 
-const ItemListPage = () => {
+const PartListPage = () => {
     const {data} = useQuery('parts', getParts);
     return (
         <div>
@@ -24,10 +24,10 @@ const ItemListPage = () => {
                     {title: 'Quantity', field: 'partQuantity'},
                 ]}
                 data={data}
-                title={'Item List'}
+                title={'Parts List'}
             />
         </div>
     );
 };
 
-export default ItemListPage;
+export default PartListPage;
