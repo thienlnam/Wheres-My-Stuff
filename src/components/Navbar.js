@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import {UnorderedListOutlined, CodeSandboxOutlined, DashboardOutlined} from '@ant-design/icons';
 import * as Constants from '../utility/constants';
 
-function Navbar(props) {
+const Navbar = (props) => {
     const handleClick = (e) => {
         props.changePage(e.key);
     };
@@ -15,8 +15,8 @@ function Navbar(props) {
                 <Menu.Item key={Constants.HEADER_DASHBOARD} icon={<DashboardOutlined />}>
             Dashboard
                 </Menu.Item>
-                <Menu.Item key={Constants.HEADER_ITEMLIST} icon={<UnorderedListOutlined />}>
-            Item List
+                <Menu.Item key={Constants.HEADER_PARTSLIST} icon={<UnorderedListOutlined />}>
+            Parts List
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_CONTAINER} icon={<CodeSandboxOutlined />}>
             Containers
@@ -24,10 +24,11 @@ function Navbar(props) {
             </Menu>
         </>
     );
-}
+};
 
 Navbar.propTypes = {
     changePage: PropTypes.func,
     currentPage: PropTypes.string,
 };
+
 export default Navbar;
