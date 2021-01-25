@@ -60,13 +60,33 @@ function getParts(req, callback) {
 }
 
 /**
+ * Gets details about a specific part given the partID
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+function getPart(req, callback) {
+    const sql = mysql.format('SELECT * FROM wmsinventory.Parts WHERE partID = ?', [
+        req.params.pid,
+    ]);
+    console.log(sql);
+    connection.query(sql, function(err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, result[0]);
+        }
+    });
+}
+
+/**
  * Update aspects of a Part based on the name and returns updated Part
  *
  * @param {*} req
  * @param {*} callback
  */
 // Bug when updating name and printing updated object
-function updatePart(req, callback) {
+function updatePartByName(req, callback) {
     let sql = mysql.format('UPDATE wmsinventory.Parts SET ? = ? WHERE name = ?', [
         req.body.column,
         req.body.value,
@@ -94,26 +114,80 @@ function updatePart(req, callback) {
 }
 
 /**
+ * Update aspects of a Part
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+function updatePart(req, callback) {
+    const partID = req.params.pid;
+    const updateSQL = mysql.format('UPDATE wmsinventory.Parts SET name = ?, category = ?, partQuantity = ?, partLocation = ? WHERE partID = ?', [
+        req.body.name,
+        req.body.category,
+        req.body.partQuantity,
+        req.body.partLocation,
+        partID,
+    ]);
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Parts WHERE partID = ?', [
+        partID,
+    ]);
+
+    // Check if part actually exists with a SELECT before updating
+    connection.query(selectSQL, (err, result) => {
+        if (err) {
+            console.log(err);
+            callback(err, null);
+        } else {
+            if (!result[0]) {
+                callback({status: 404, message: 'Specified part does not exist'});
+            } else {
+                // Part exists, perform update
+                connection.query(updateSQL, (err, result) => {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, req.body);
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
  * Deletes an Part along with the filter and criteria
  *
  * @param {*} req
  * @param {*} callback
  */
 function deletePart(req, callback) {
-    // TODO: Add check if item exists
-    // TODO: Delete if exists otherwise give error code and message
-    let sql = mysql.format('DELETE FROM WMSInventory.Parts WHERE ? = ?', [
-        req.body.criteria,
-        req.body.filter,
+    const partID = req.params.pid;
+    const deleteSQL = mysql.format('DELETE FROM WMSInventory.Parts WHERE partID = ?', [
+        partID,
     ]);
-    for (let i = 0; i < 2; i++) {
-        sql = sql.replace(/["']/, '');
-    }
-    connection.query(sql, function(err, result) {
+
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Parts WHERE partID = ?', [
+        partID,
+    ]);
+
+    connection.query(selectSQL, function(err, result) {
         if (err) {
+            console.log(err);
             callback(err, null);
         } else {
-            callback(null, result);
+            // Check if element exits
+            if (!result[0]) {
+                callback({status: 404, message: 'Specified part does not exist'});
+            } else {
+                // Part exists, perform update
+                connection.query(deleteSQL, (err, result) => {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, result);
+                    }
+                });
+            }
         }
     });
 }
@@ -155,9 +229,24 @@ router.get('/', function(req, res) {
     }
 });
 
+router.get('/:pid', function(req, res) {
+    console.log('Getting information for part:', req.params.pid);
+    getPart(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({status: err.status, message: err.message});
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json(data);
+        }
+    }
+});
+
 router.patch('/', function(req, res) {
-    console.log('Updating Part');
-    updatePart(req, callback);
+    console.log('Updating Part by name');
+    updatePartByName(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
@@ -170,8 +259,23 @@ router.patch('/', function(req, res) {
     }
 });
 
-router.delete('/', function(req, res) {
-    console.log('Deleting Part');
+router.patch('/:pid', function(req, res) {
+    console.log('Updating Part');
+    updatePart(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({status: err.status, message: err.message});
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(201).json(data);
+        }
+    }
+});
+
+router.delete('/:pid', function(req, res) {
+    console.log('Deleting Part with ID', req.params.pid);
     deletePart(req, callback);
     function callback(err) {
         if (err) {

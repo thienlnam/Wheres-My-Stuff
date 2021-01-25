@@ -12,6 +12,7 @@ import {
     QueryClient,
     QueryClientProvider,
 } from 'react-query';
+import {ReactQueryDevtools} from 'react-query/devtools';
 
 const queryClient = new QueryClient();
 
@@ -25,7 +26,7 @@ function App() {
         pageShown = <PartListPage />;
     } else if (currentPage === Constants.HEADER_CONTAINER) {
         pageShown = <ContainerPage />;
-    }  else if (currentPage === Constants.HEADER_PROFILES) {
+    } else if (currentPage === Constants.HEADER_PROFILES) {
         pageShown = <ProfilePage />;
     } else if (currentPage === Constants.HEADER_CATEGORY) {
         pageShown = <CategoryPage />;
@@ -46,6 +47,7 @@ function App() {
                 </Content>
                 <Footer style={{textAlign: 'center'}}>Capstone CS Team 24 ©2020</Footer>
             </Layout>
+            <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
     );
 }
