@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     port: process.env.DB_PORT || 3306,
-    database: 'WMSInventory',
+    database: 'wmsinventory',
 });
 // --LEAVING THESE FOR NOW-- //
 /**

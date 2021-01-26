@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     port: process.env.DB_PORT || 3306,
-    database: 'WMSInventory',
+    database: 'wmsinventory',
 });
 
 /**
@@ -43,6 +43,7 @@ function createContainer(req, callback) {
  */
 function getContainers(req, callback) {
     let sql;
+    console.log(process.env.DB_HOST);
     if (Object.keys(req.query).length != 0) {
         sql = mysql.format('SELECT * FROM wmsinventory.Containers WHERE ? = ?', [req.query.filter, req.query.name]);
         for (let i = 0; i < 2; i++) {
