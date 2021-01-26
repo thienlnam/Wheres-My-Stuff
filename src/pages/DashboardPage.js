@@ -15,7 +15,7 @@ const DashboardPage = () => {
         },
         {
             command: 'What items are (inside) (in) (the) *',
-            callback: (container) => setMessage(`Inside the ${container} is a Screwdriver, Sanded Plywood 5", and Sanded Wood 10".`),
+            callback: (container) => setMessage(`Inside the ${container} is a Screwdriver, Sanded Plywood 5", and Sanded Plywood 10".`),
         },
         {
             command: 'How many items are (there) in the *',
