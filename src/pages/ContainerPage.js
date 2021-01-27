@@ -3,14 +3,12 @@ import axios from 'axios';
 import Table from '../components/Table';
 import {useQuery} from 'react-query';
 
-require('dotenv').config({ path: '../.env' });
-const url = process.env.AWS_HOST + '/Containers';
-const url1 = 'http://localhost:9000/Containers'
+const url = process.env.REACT_APP_HOST;
 
 const getContainers = async () => {
     const {data} = await axios.request({
         method: 'GET',
-        url: url,
+        url: url + '/Containers',
     });
     return data;
 };

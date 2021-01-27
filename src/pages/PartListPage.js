@@ -3,23 +3,23 @@ import axios from 'axios';
 import Table from '../components/Table';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 
-require('dotenv').config({ path: '../.env' });
+const url = process.env.REACT_APP_HOST;
 
 const getParts = async () => {
     const {data} = await axios.request({
         method: 'GET',
-        url: 'http://localhost:9000/Parts',
+        url: url + '/Parts',
     });
     return data;
 };
 
 const updatePart = async (partData) => {
-    const {data} = await axios.patch(`http://localhost:9000/Parts/${partData.partID}`, partData);
+    const {data} = await axios.patch(url + `/Parts/${partData.partID}`, partData);
     return data;
 };
 
 const deletePart = async (partID) => {
-    const {data} = await axios.delete(`http://localhost:9000/Parts/${partID}`);
+    const {data} = await axios.delete(url + `/Parts/${partID}`);
     return data;
 };
 

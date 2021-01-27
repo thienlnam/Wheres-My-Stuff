@@ -3,10 +3,12 @@ import axios from 'axios';
 import Table from '../components/Table';
 import {useQuery} from 'react-query';
 
+const url = process.env.REACT_APP_HOST;
+
 const getCategories = async () => {
     const {data} = await axios.request({
         method: 'GET',
-        url: 'http://localhost:9000/Categories',
+        url: url + '/Categories',
     });
     return data;
 };
