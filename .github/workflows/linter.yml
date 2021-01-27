@@ -1,9 +1,12 @@
 name: "Eslint Style"
-on: [pull_request]
+on: push
 
 jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.4.2
+      - uses: actions/checkout@v2
+      - name: Install modules
+        run: npm install
+      - name: Run ESLint
+        run: eslint . --ext .js,.jsx,.ts,.tsx
