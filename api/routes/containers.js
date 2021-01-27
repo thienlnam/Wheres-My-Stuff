@@ -43,7 +43,6 @@ function createContainer(req, callback) {
  */
 function getContainers(req, callback) {
     let sql;
-    console.log(process.env.DB_HOST);
     if (Object.keys(req.query).length != 0) {
         sql = mysql.format('SELECT * FROM wmsinventory.Containers WHERE ? = ?', [req.query.filter, req.query.name]);
         for (let i = 0; i < 2; i++) {

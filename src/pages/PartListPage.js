@@ -1,7 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import Table from '../components/Table';
-import {useQuery} from 'react-query';
+import { useQuery } from 'react-query';
+
+require('dotenv').config({ path: '../.env' });
 
 const getParts = async () => {
     const {data} = await axios.request({
