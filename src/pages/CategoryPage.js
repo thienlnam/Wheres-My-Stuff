@@ -1,10 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import Table from '../components/Table';
-import { useQuery } from 'react-query';
+import {useQuery} from 'react-query';
 
 const getCategories = async () => {
-    const { data } = await axios.request({
+    const {data} = await axios.request({
         method: 'GET',
         url: 'http://localhost:9000/Categories',
     });
@@ -12,12 +12,12 @@ const getCategories = async () => {
 };
 
 const CategoryPage = () => {
-    const { data } = useQuery('categories', getCategories);
+    const {data} = useQuery('categories', getCategories);
     return (
         <div>
             <Table
                 columns={[
-                    { title: 'Name', field: 'name' },
+                    {title: 'Name', field: 'name'},
                 ]}
                 data={data}
                 title={'Categories List'}
