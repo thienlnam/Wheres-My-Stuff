@@ -19,14 +19,13 @@ const connection = mysql.createConnection({
  * @param {*} callback
  */
 function createContainer(req, callback) {
-    const sql = mysql.format('INSERT INTO wmsinventory.Containers (name, quantity, size, location, description) VALUES (?, ?, ?, ?, ?)', [
+    const createSQL = mysql.format('INSERT INTO wmsinventory.Containers (name, size, location, description) VALUES (?, ?, ?, ?)', [
         req.body.name,
-        req.body.quantity,
         req.body.size,
         req.body.location,
         req.body.description,
     ]);
-    connection.query(sql, function(err, result) {
+    connection.query(createSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -42,20 +41,31 @@ function createContainer(req, callback) {
  * @param {*} callback
  */
 function getContainers(req, callback) {
-    let sql;
-    if (Object.keys(req.query).length != 0) {
-        sql = mysql.format('SELECT * FROM wmsinventory.Containers WHERE ? = ?', [req.query.filter, req.query.name]);
-        for (let i = 0; i < 2; i++) {
-            sql = sql.replace(/["']/, '');
-        }
-    } else {
-        sql = mysql.format('SELECT * FROM wmsinventory.Containers');
-    }
-    connection.query(sql, function(err, result) {
+    let selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers');
+    connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
             callback(null, result);
+        }
+    });
+}
+
+/**
+ * Gets details about a specific container given the containerID
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+function getContainer(req, callback) {
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
+        req.params.cid,
+    ]);
+    connection.query(selectSQL, function (err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, result[0]);
         }
     });
 }
@@ -68,22 +78,23 @@ function getContainers(req, callback) {
  */
 // Bug when updating name and printing updated object
 function updateContainer(req, callback) {
-    let sql = mysql.format('UPDATE wmsinventory.Containers SET ? = ? WHERE name = ?', [
+    const containerID = req.params.cid;
+    let updateSQL = mysql.format('UPDATE wmsinventory.Containers SET ? = ? WHERE containerID = ?', [
         req.body.column,
         req.body.value,
-        req.body.name,
+        containerID,
     ]);
-    const sql1 = mysql.format('SELECT * FROM wmsinventory.Containers WHERE name = ?', [
-        req.body.name,
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
+        containerID,
     ]);
     for (let i = 0; i < 2; i++) {
-        sql = sql.replace(/["']/, '');
+        updateSQL = updateSQL.replace(/["']/, '');
     }
-    connection.query(sql, function(err, result) {
+    connection.query(updateSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
-            connection.query(sql1, function(err, result) {
+            connection.query(selectSQL, function(err, result) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -101,20 +112,31 @@ function updateContainer(req, callback) {
  * @param {*} callback
  */
 function deleteContainer(req, callback) {
-    // TODO: Add check if item exists
-    // TODO: Delete if exists otherwise give error code and message
-    let sql = mysql.format('DELETE FROM WMSInventory.Containers WHERE ? = ?', [
-        req.body.criteria,
-        req.body.filter,
+    const containerID = req.params.cid;
+    let updateSQL = mysql.format('DELETE FROM WMSInventory.Containers WHERE containerID = ?', [
+        containerID,
     ]);
-    for (let i = 0; i < 2; i++) {
-        sql = sql.replace(/["']/, '');
-    }
-    connection.query(sql, function(err, result) {
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
+        containerID,
+    ]);
+    // Check if container actually exists with a SELECT before updating
+    connection.query(selectSQL, (err, result) => {
         if (err) {
+            console.log(err);
             callback(err, null);
         } else {
-            callback(null, result);
+            if (!result[0]) {
+                callback({ status: 404, message: 'Specified container does not exist' });
+            } else {
+                // Container exists, perform update
+                connection.query(updateSQL, (err, result) => {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, req.body);
+                    }
+                });
+            }
         }
     });
 }
@@ -133,7 +155,6 @@ router.post('/', function(req, res) {
             res.status(201).json({
                 id: data.insertId,
                 name: req.body.name,
-                quantity: req.body.quantity,
                 size: req.body.size,
                 location: req.body.location,
                 description: req.body.description,
@@ -157,7 +178,22 @@ router.get('/', function(req, res) {
     }
 });
 
-router.patch('/', function(req, res) {
+router.get('/:cid', function (req, res) {
+    console.log('Getting all Containers');
+    getContainer(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({ status: err.status, message: err.message });
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json(data);
+        }
+    }
+});
+
+router.patch('/:cid', function(req, res) {
     console.log('Updating Container');
     updateContainer(req, callback);
     function callback(err, data) {
@@ -172,7 +208,7 @@ router.patch('/', function(req, res) {
     }
 });
 
-router.delete('/', function(req, res) {
+router.delete('/:cid', function(req, res) {
     console.log('Deleting Container');
     deleteContainer(req, callback);
     function callback(err) {

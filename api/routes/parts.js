@@ -19,11 +19,8 @@ const connection = mysql.createConnection({
  * @param {*} callback
  */
 function createPart(req, callback) {
-    const sql = mysql.format('INSERT INTO wmsinventory.Parts (name, category, partQuantity, partLocation) VALUES (?, ?, ?, ?)', [
+    const sql = mysql.format('INSERT INTO wmsinventory.Parts (name) VALUES (?)', [
         req.body.name,
-        req.body.category,
-        req.body.quantity,
-        req.body.location,
     ]);
     connection.query(sql, function(err, result) {
         if (err) {
@@ -42,14 +39,7 @@ function createPart(req, callback) {
  */
 function getParts(req, callback) {
     let sql;
-    if (Object.keys(req.query).length != 0) {
-        sql = mysql.format('SELECT * FROM wmsinventory.Parts WHERE ? = ?', [req.query.filter, req.query.name]);
-        for (let i = 0; i < 2; i++) {
-            sql = sql.replace(/["']/, '');
-        }
-    } else {
-        sql = mysql.format('SELECT * FROM wmsinventory.Parts');
-    }
+    sql = mysql.format('SELECT * FROM wmsinventory.Parts');
     connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
@@ -80,40 +70,6 @@ function getPart(req, callback) {
 }
 
 /**
- * Update aspects of a Part based on the name and returns updated Part
- *
- * @param {*} req
- * @param {*} callback
- */
-// Bug when updating name and printing updated object
-function updatePartByName(req, callback) {
-    let sql = mysql.format('UPDATE wmsinventory.Parts SET ? = ? WHERE name = ?', [
-        req.body.column,
-        req.body.value,
-        req.body.name,
-    ]);
-    const sql1 = mysql.format('SELECT * FROM wmsinventory.Parts WHERE name = ?', [
-        req.body.name,
-    ]);
-    for (let i = 0; i < 2; i++) {
-        sql = sql.replace(/["']/, '');
-    }
-    connection.query(sql, function(err, result) {
-        if (err) {
-            callback(err, null);
-        } else {
-            connection.query(sql1, function(err, result) {
-                if (err) {
-                    callback(err, null);
-                } else {
-                    callback(null, result);
-                }
-            });
-        }
-    });
-}
-
-/**
  * Update aspects of a Part
  *
  * @param {*} req
@@ -121,11 +77,8 @@ function updatePartByName(req, callback) {
  */
 function updatePart(req, callback) {
     const partID = req.params.pid;
-    const updateSQL = mysql.format('UPDATE wmsinventory.Parts SET name = ?, category = ?, partQuantity = ?, partLocation = ? WHERE partID = ?', [
+    const updateSQL = mysql.format('UPDATE wmsinventory.Parts SET name = ? WHERE partID = ?', [
         req.body.name,
-        req.body.category,
-        req.body.partQuantity,
-        req.body.partLocation,
         partID,
     ]);
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Parts WHERE partID = ?', [
@@ -240,21 +193,6 @@ router.get('/:pid', function(req, res) {
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json(data);
-        }
-    }
-});
-
-router.patch('/', function(req, res) {
-    console.log('Updating Part by name');
-    updatePartByName(req, callback);
-    function callback(err, data) {
-        if (err) {
-            console.log(err);
-            res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({status: err.status, message: err.message});
-        } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.status(201).json({data});
         }
     }
 });

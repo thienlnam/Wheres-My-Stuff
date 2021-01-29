@@ -1,4 +1,4 @@
-USE WMSInventory;
+USE wmsinventory;
 
 -- Insert Example Categories
 INSERT INTO Categories (name) VALUES ("Power Tools");

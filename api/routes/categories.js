@@ -19,10 +19,10 @@ const connection = mysql.createConnection({
  * @param {*} callback
  */
 function createCategory(req, callback) {
-    const sql = mysql.format('INSERT INTO wmsinventory.Categories (name) VALUES (?)', [
+    const createSQL = mysql.format('INSERT INTO wmsinventory.Categories (name) VALUES (?)', [
         req.body.name,
     ]);
-    connection.query(sql, function(err, result) {
+    connection.query(createSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -38,20 +38,31 @@ function createCategory(req, callback) {
  * @param {*} callback
  */
 function getCategories(req, callback) {
-    let sql;
-    if (Object.keys(req.query).length != 0) {
-        sql = mysql.format('SELECT * FROM wmsinventory.Categories WHERE ? = ?', [req.query.filter, req.query.name]);
-        for (let i = 0; i < 2; i++) {
-            sql = sql.replace(/["']/, '');
-        }
-    } else {
-        sql = mysql.format('SELECT * FROM wmsinventory.Categories');
-    }
-    connection.query(sql, function(err, result) {
+    let selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories');
+    connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
             callback(null, result);
+        }
+    });
+}
+
+/**
+ * Gets details about a specific category given the categoryID
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+function getCategory(req, callback) {
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
+        req.params.cid,
+    ]);
+    connection.query(selectSQL, function (err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, result[0]);
         }
     });
 }
@@ -64,22 +75,19 @@ function getCategories(req, callback) {
  */
 // Bug when updating name and printing updated object
 function updateCategory(req, callback) {
-    let sql = mysql.format('UPDATE wmsinventory.Categories SET ? = ? WHERE name = ?', [
-        req.body.column,
-        req.body.value,
+    const categoryID = req.params.cid;
+    let updateSQL = mysql.format('UPDATE wmsinventory.Categories SET name = ? WHERE categoryID = ?', [
         req.body.name,
+        categoryID,
     ]);
-    const sql1 = mysql.format('SELECT * FROM wmsinventory.Categories WHERE name = ?', [
-        req.body.name,
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
+        categoryID,
     ]);
-    for (let i = 0; i < 2; i++) {
-        sql = sql.replace(/["']/, '');
-    }
-    connection.query(sql, function(err, result) {
+    connection.query(updateSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
-            connection.query(sql1, function(err, result) {
+            connection.query(selectSQL, function(err, result) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -91,26 +99,37 @@ function updateCategory(req, callback) {
 }
 
 /**
- * Deletes an Category along with the filter and criteria
+ * Deletes a Category along with the filter and criteria
  *
  * @param {*} req
  * @param {*} callback
  */
 function deleteCategory(req, callback) {
-    // TODO: Add check if item exists
-    // TODO: Delete if exists otherwise give error code and message
-    let sql = mysql.format('DELETE FROM WMSInventory.Categories WHERE ? = ?', [
-        req.body.criteria,
-        req.body.filter,
+    const categoryID = req.params.cid;
+    let updateSQL = mysql.format('DELETE FROM WMSInventory.Categories WHERE categoryID = ?', [
+        categoryID,
     ]);
-    for (let i = 0; i < 2; i++) {
-        sql = sql.replace(/["']/, '');
-    }
-    connection.query(sql, function(err, result) {
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
+        categoryID,
+    ]);
+    // Check if category actually exists with a SELECT before updating
+    connection.query(selectSQL, (err, result) => {
         if (err) {
+            console.log(err);
             callback(err, null);
         } else {
-            callback(null, result);
+            if (!result[0]) {
+                callback({ status: 404, message: 'Specified category does not exist' });
+            } else {
+                // Category exists, perform update
+                connection.query(updateSQL, (err, result) => {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, req.body);
+                    }
+                });
+            }
         }
     });
 }
@@ -149,7 +168,22 @@ router.get('/', function(req, res) {
     }
 });
 
-router.patch('/', function(req, res) {
+router.get('/:cid', function (req, res) {
+    console.log('Getting specified Category');
+    getCategory(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({ status: err.status, message: err.message });
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json(data);
+        }
+    }
+});
+
+router.patch('/:cid', function(req, res) {
     console.log('Updating Category');
     updateCategory(req, callback);
     function callback(err, data) {
@@ -164,7 +198,7 @@ router.patch('/', function(req, res) {
     }
 });
 
-router.delete('/', function(req, res) {
+router.delete('/:cid', function(req, res) {
     console.log('Deleting Category');
     deleteCategory(req, callback);
     function callback(err) {
