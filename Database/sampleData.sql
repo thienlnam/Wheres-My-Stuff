@@ -1,36 +1,39 @@
 USE WMSInventory;
 
+-- Insert Example Categories
+INSERT INTO Categories (name) VALUES ("Power Tools");
+INSERT INTO Categories (name) VALUES ("Hardware");
+INSERT INTO Categories (name) VALUES ("Paint");
+INSERT INTO Categories (name) VALUES ("Building Supplies");
+
 -- Insert Example Parts
-INSERT INTO Parts (category, name, partQuantity, partLocation)
-VALUES ("Screw", "ScrewA", 5, "A1");
+INSERT INTO Parts (name) VALUES ("Screw A");
+INSERT INTO Parts (name) VALUES ("Screw B");
+INSERT INTO Parts (name) VALUES ("Power Drill");
+INSERT INTO Parts (name) VALUES ("Black Spray Paint");
 
-INSERT INTO Parts (category, name, partQuantity, partLocation)
-VALUES ("Screw", "ScrewB", 25, "A1");
+-- Assign parts with categories
+INSERT INTO CategorizedBy (partID, categoryID) VALUES (1, 2);
+INSERT INTO CategorizedBy (partID, categoryID) VALUES (2, 2);
+INSERT INTO CategorizedBy (partID, categoryID) VALUES (1, 4);
+INSERT INTO CategorizedBy (partID, categoryID) VALUES (2, 4);
+INSERT INTO CategorizedBy (partID, categoryID) VALUES (3, 1);
+INSERT INTO CategorizedBy (partID, categoryID) VALUES (4, 3);
+INSERT INTO CategorizedBy (partID, categoryID) VALUES (4, 4);
 
-INSERT INTO Parts (category, name, partQuantity)
-VALUES ("Screw", "ScrewC", 3);
+-- Sample Containers
+INSERT INTO Containers (name, size, location, description) VALUES ('Red Tool Box', 6, 'Garage', 'Red hexagon shaped box');
+INSERT INTO Containers (name, size, location, description) VALUES ('Black Storage Cabinet', 3, 'Garage', 'Black cabinet in the left-corner of the garage');
+INSERT INTO Containers (name, size, location, description) VALUES ('Black Storage Cabinet 2', 3, 'Living Room', 'Black cabinet next to the dining table');
+INSERT INTO Containers (name, location, description) VALUES ('Living Room', 'Living Room', 'The Living Room');
 
-INSERT INTO Parts (category, name, partQuantity, partLocation)
-VALUES ("Hammer", "Ballpeen", 2, "garage");
-
-
--- Insert Example Categegory
-INSERT INTO Categories (name)
-VALUES ("Screw");
-
-INSERT INTO Categories (name)
-VALUES ("Hammer");
-
-
--- Insert Example Container
-INSERT INTO Containers (name, partId, quantity, size, location, description)
-VALUES ("Toolbox", 1, 2, 15, "A1", "A1 container");
-
-INSERT INTO Containers (name, partId, quantity, size, location)
-VALUES ("Cardboard Box", 2, 2, 15, "A1");
-
-INSERT INTO Containers (name, partId, quantity, size, location, description)
-VALUES ("Red Box", 2, 1, 25, "A2", "A2 container");
+-- Assign parts to Containers
+INSERT INTO ContainedBy (partID, containerID, identifier, quantity) VALUES (1, 1, 'A1', 15);
+INSERT INTO ContainedBy (partID, containerID, identifier, quantity) VALUES (1, 2, 'Top Drawer', 10);
+INSERT INTO ContainedBy (partID, containerID, identifier, quantity) VALUES (2, 1, 'A2', 8);
+INSERT INTO ContainedBy (partID, containerID, identifier, quantity) VALUES (3, 2, 'Second Drawer', 1);
+INSERT INTO ContainedBy (partID, containerID, identifier, quantity) VALUES (3, 3, 'Top Drawer', 1);
+INSERT INTO ContainedBy (partID, containerID, identifier, quantity) VALUES (4, 4, 'Left Corner', 2);
 
 -- Insert Example User
 INSERT INTO Users (username, password)

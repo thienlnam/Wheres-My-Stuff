@@ -6,23 +6,30 @@ USE WMSInventory;
 -- Drop Tables if Existing
 DROP TABLE IF EXISTS Containers;
 DROP TABLE IF EXISTS CategorizedBy;
+DROP TABLE IF EXISTS ContainedBy;
 DROP TABLE IF EXISTS Users;
 DROP TABLE IF EXISTS Parts; 
 DROP TABLE IF EXISTS Categories;
-
--- Create Part table
-CREATE TABLE Parts (
-	partID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	category varchar(255) DEFAULT NULL,
-	name varchar(255) NOT NULL,
-	partQuantity int NOT NULL,
-	partLocation varchar(255) DEFAULT NULL
-);
 
 -- Create Category table
 CREATE TABLE Categories (
 	categoryID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name varchar(255) UNIQUE NOT NULL
+);
+
+-- Create Part table
+CREATE TABLE Parts (
+	partID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name varchar(255) NOT NULL
+);
+
+-- Create Container table
+CREATE TABLE Containers (
+	containerID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name varchar(255) UNIQUE NOT NULL,
+	size int DEFAULT NULL,
+	location varchar(255) NOT NULL,
+	description varchar(255) DEFAULT NULL
 );
 
 -- Create User table
@@ -33,37 +40,23 @@ CREATE TABLE Users (
 	password varchar(255) NOT NULL
 );
 
--- Create Container table
-CREATE TABLE Containers (
-	containerID int UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	partID int NULL,
-	name varchar(255) UNIQUE NOT NULL,
-	quantity int DEFAULT NULL,
-	size int NOT NULL,
-	location varchar(255) NOT NULL,
-	description varchar(255) DEFAULT NULL
-);
 
--- Create CategorizedBy table
+-- Create table for mapping parts with categories
 CREATE TABLE CategorizedBy (
 	partID int NOT NULL, 
 	categoryID int NOT NULL,
 	PRIMARY KEY (partID, categoryID),
-	FOREIGN KEY fk_partID(partID) REFERENCES Parts(partID)
-	ON DELETE CASCADE,
-	FOREIGN KEY fk_categoryID(categoryID) REFERENCES Categories(categoryID)
-	ON DELETE CASCADE
+	FOREIGN KEY (partID) REFERENCES Parts(partID),
+	FOREIGN KEY (categoryID) REFERENCES Categories(categoryID)
 );
 
--- Create Relationships
--- Users
-ALTER TABLE Users
-ADD CONSTRAINT user_fk_partID
-FOREIGN KEY (partID) REFERENCES Parts(partID)
-ON DELETE CASCADE;
-
--- Containers
-ALTER TABLE Containers
-ADD CONSTRAINT container_fk_partID
-FOREIGN KEY (partID) REFERENCES Parts(partID)
-ON DELETE CASCADE;
+-- Create table for mapping parts with containers
+CREATE TABLE ContainedBy (
+	partID int NOT NULL,
+	containerID int NOT NULL,
+	identifier varchar(255) NOT NULL DEFAULT '',
+	quantity float DEFAULT 0,
+	PRIMARY KEY (partID, containerID, identifier),
+	FOREIGN KEY (partID) REFERENCES Parts(partID),
+	FOREIGN KEY (containerID) REFERENCES Containers(containerID)
+);
