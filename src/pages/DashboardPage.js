@@ -7,19 +7,19 @@ const DashboardPage = () => {
     const commands = [
         {
             command: 'Where is (my) (the) *',
-            callback: (item) => setMessage(`The ${item} is located in the Garage, in the red storage box.`),
+            callback: (item) => setMessage(`${item} is located in the Red Tool Box (A1), and Black Storage Cabinet (Top Drawer).`),
         },
         {
             command: 'Where\'s (my) (the) *',
-            callback: (item) => setMessage(`The ${item} is located in the Garage, in the red storage box.`),
+            callback: (item) => setMessage(`${item} is located in the Red Tool Box (A1), and Black Storage Cabinet (Top Drawer).`),
         },
         {
             command: 'What items are (inside) (in) (the) *',
-            callback: (container) => setMessage(`Inside the ${container} is a Screwdriver, Sanded Plywood 5", and Sanded Wood 10".`),
+            callback: (container) => setMessage(`Inside the ${container} is a Screw A, and Screw B.`),
         },
         {
             command: 'How many items are (there) in the *',
-            callback: (location) => setMessage(`There are 3 items in the ${location}`),
+            callback: (location) => setMessage(`There are 2 items in the ${location}`),
         },
         {
             command: 'clear',

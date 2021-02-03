@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '../.env' });
+require('dotenv').config({path: '../.env'});
 
 const express = require('express');
 const router = express.Router();
@@ -21,13 +21,13 @@ const connection = mysql.createConnection({
 function createContains(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
-    let sql = mysql.format('INSERT INTO wmsinventory.ContainedBy (partID, containerID, identifier, quantity) VALUES (?, ?, ?, ?)', [
+    const sql = mysql.format('INSERT INTO wmsinventory.ContainedBy (partID, containerID, identifier, quantity) VALUES (?, ?, ?, ?)', [
         partID,
         containerID,
         req.body.identifier,
         req.body.quantity,
     ]);
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -59,11 +59,11 @@ function updateContainsByIDs(req, callback) {
     for (let i = 0; i < 2; i++) {
         sql = sql.replace(/["']/, '');
     }
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
-            connection.query(sql1, function (err, result) {
+            connection.query(sql1, function(err, result) {
                 if (err) {
                     callback(err, null);
                 } else {
@@ -101,7 +101,7 @@ function updateContains(req, callback) {
             callback(err, null);
         } else {
             if (!result[0]) {
-                callback({ status: 404, message: 'Specified relationship does not exist' });
+                callback({status: 404, message: 'Specified relationship does not exist'});
             } else {
                 // ContainedBy exists, perform update
                 connection.query(updateSQL, (err, result) => {
@@ -135,14 +135,14 @@ function deleteContains(req, callback) {
         containerID,
     ]);
 
-    connection.query(selectSQL, function (err, result) {
+    connection.query(selectSQL, function(err, result) {
         if (err) {
             console.log(err);
             callback(err, null);
         } else {
             // Check if element exits
             if (!result[0]) {
-                callback({ status: 404, message: 'Specified containedBy does not exist' });
+                callback({status: 404, message: 'Specified containedBy does not exist'});
             } else {
                 // ContainedBy exists, perform update
                 connection.query(deleteSQL, (err, result) => {
@@ -158,14 +158,14 @@ function deleteContains(req, callback) {
 }
 
 
-router.post('/Containers/:cid/Parts/:pid', function (req, res) {
+router.post('/Containers/:cid/Parts/:pid', function(req, res) {
     console.log('Adding part to container');
     createContains(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json();
@@ -174,14 +174,14 @@ router.post('/Containers/:cid/Parts/:pid', function (req, res) {
 });
 
 // Need to find a way to separate two updates
-router.patch('/Containers/:cid/Parts/:pid', function (req, res) {
+router.patch('/Containers/:cid/Parts/:pid', function(req, res) {
     console.log('Updating ContainedBy');
     updateContainsByIDs(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json();
@@ -189,14 +189,14 @@ router.patch('/Containers/:cid/Parts/:pid', function (req, res) {
     }
 });
 
-router.patch('/Containers/:cid/Parts/:pid', function (req, res) {
+router.patch('/Containers/:cid/Parts/:pid', function(req, res) {
     console.log('Updating ContainedBy');
     updateContains(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(201).json();
@@ -204,14 +204,14 @@ router.patch('/Containers/:cid/Parts/:pid', function (req, res) {
     }
 });
 
-router.delete('/Containers/:cid/Parts/:pid', function (req, res) {
+router.delete('/Containers/:cid/Parts/:pid', function(req, res) {
     console.log('Deleting ContainedBy');
     deleteContains(req, callback);
     function callback(err) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(204).json();
