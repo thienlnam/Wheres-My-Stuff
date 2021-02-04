@@ -5,6 +5,7 @@ import ContainerPage from './pages/ContainerPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import CategoryPage from './pages/CategoryPage';
+import ContainedByPage from './pages/ContainedByPage';
 import Navbar from './components/Navbar';
 import * as Constants from './utility/constants';
 import {Layout} from 'antd';
@@ -24,6 +25,8 @@ function App() {
     let pageShown;
     if (currentPage === Constants.HEADER_PARTSLIST) {
         pageShown = <PartListPage />;
+    } else if (currentPage === Constants.HEADER_CONTAINEDBY) {
+        pageShown = <ContainedByPage />;
     } else if (currentPage === Constants.HEADER_CONTAINER) {
         pageShown = <ContainerPage />;
     } else if (currentPage === Constants.HEADER_PROFILES) {

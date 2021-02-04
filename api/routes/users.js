@@ -69,7 +69,7 @@ function getUser(req, callback) {
         req.params.uid,
     ]);
     console.log(sql);
-    connection.query(sql, function (err, result) {
+    connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -104,7 +104,7 @@ function updateUser(req, callback) {
             callback(err, null);
         } else {
             if (!result[0]) {
-                callback({ status: 404, message: 'Specified user does not exist' });
+                callback({status: 404, message: 'Specified user does not exist'});
             } else {
                 // User exists, perform update
                 connection.query(updateSQL, (err, result) => {
@@ -135,14 +135,14 @@ function deleteUser(req, callback) {
         userID,
     ]);
 
-    connection.query(selectSQL, function (err, result) {
+    connection.query(selectSQL, function(err, result) {
         if (err) {
             console.log(err);
             callback(err, null);
         } else {
             // Check if element exits
             if (!result[0]) {
-                callback({ status: 404, message: 'Specified user does not exist' });
+                callback({status: 404, message: 'Specified user does not exist'});
             } else {
                 // User exists, perform update
                 connection.query(deleteSQL, (err, result) => {
@@ -190,14 +190,14 @@ router.get('/', function(req, res) {
     }
 });
 
-router.get('/:uid', function (req, res) {
+router.get('/:uid', function(req, res) {
     console.log('Getting User with requested UID');
     getUser(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json(data);

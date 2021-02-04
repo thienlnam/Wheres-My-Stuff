@@ -41,7 +41,7 @@ function createContainer(req, callback) {
  * @param {*} callback
  */
 function getContainers(req, callback) {
-    let selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers');
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers');
     connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
@@ -61,7 +61,7 @@ function getContainer(req, callback) {
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
         req.params.cid,
     ]);
-    connection.query(selectSQL, function (err, result) {
+    connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -79,28 +79,33 @@ function getContainer(req, callback) {
 // Bug when updating name and printing updated object
 function updateContainer(req, callback) {
     const containerID = req.params.cid;
-    let updateSQL = mysql.format('UPDATE wmsinventory.Containers SET ? = ? WHERE containerID = ?', [
-        req.body.column,
-        req.body.value,
+    const updateSQL = mysql.format('UPDATE wmsinventory.Containers SET name = ?, description = ?, location = ?, size = ? WHERE containerID = ?', [
+        req.body.name,
+        req.body.description,
+        req.body.location,
+        req.body.size,
         containerID,
     ]);
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
         containerID,
     ]);
-    for (let i = 0; i < 2; i++) {
-        updateSQL = updateSQL.replace(/["']/, '');
-    }
-    connection.query(updateSQL, function(err, result) {
+
+    connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
-            connection.query(selectSQL, function(err, result) {
-                if (err) {
-                    callback(err, null);
-                } else {
-                    callback(null, result);
-                }
-            });
+            console.log(result);
+            if (!result[0]) {
+                callback({status: 404, message: 'Specified container does not exist'});
+            } else {
+                connection.query(updateSQL, function(err, result) {
+                    if (err) {
+                        callback(err, null);
+                    } else {
+                        callback(null, req.body);
+                    }
+                });
+            }
         }
     });
 }
@@ -113,7 +118,7 @@ function updateContainer(req, callback) {
  */
 function deleteContainer(req, callback) {
     const containerID = req.params.cid;
-    let updateSQL = mysql.format('DELETE FROM WMSInventory.Containers WHERE containerID = ?', [
+    const updateSQL = mysql.format('DELETE FROM WMSInventory.Containers WHERE containerID = ?', [
         containerID,
     ]);
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
@@ -126,7 +131,7 @@ function deleteContainer(req, callback) {
             callback(err, null);
         } else {
             if (!result[0]) {
-                callback({ status: 404, message: 'Specified container does not exist' });
+                callback({status: 404, message: 'Specified container does not exist'});
             } else {
                 // Container exists, perform update
                 connection.query(updateSQL, (err, result) => {
@@ -178,14 +183,14 @@ router.get('/', function(req, res) {
     }
 });
 
-router.get('/:cid', function (req, res) {
+router.get('/:cid', function(req, res) {
     console.log('Getting all Containers');
     getContainer(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json(data);
@@ -203,7 +208,7 @@ router.patch('/:cid', function(req, res) {
             res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
-            res.status(201).json({data});
+            res.status(201).json(data);
         }
     }
 });

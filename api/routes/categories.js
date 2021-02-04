@@ -38,7 +38,7 @@ function createCategory(req, callback) {
  * @param {*} callback
  */
 function getCategories(req, callback) {
-    let selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories');
+    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories');
     connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
@@ -58,7 +58,7 @@ function getCategory(req, callback) {
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
         req.params.cid,
     ]);
-    connection.query(selectSQL, function (err, result) {
+    connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
         } else {
@@ -76,7 +76,7 @@ function getCategory(req, callback) {
 // Bug when updating name and printing updated object
 function updateCategory(req, callback) {
     const categoryID = req.params.cid;
-    let updateSQL = mysql.format('UPDATE wmsinventory.Categories SET name = ? WHERE categoryID = ?', [
+    const updateSQL = mysql.format('UPDATE wmsinventory.Categories SET name = ? WHERE categoryID = ?', [
         req.body.name,
         categoryID,
     ]);
@@ -106,7 +106,7 @@ function updateCategory(req, callback) {
  */
 function deleteCategory(req, callback) {
     const categoryID = req.params.cid;
-    let updateSQL = mysql.format('DELETE FROM WMSInventory.Categories WHERE categoryID = ?', [
+    const updateSQL = mysql.format('DELETE FROM WMSInventory.Categories WHERE categoryID = ?', [
         categoryID,
     ]);
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
@@ -119,7 +119,7 @@ function deleteCategory(req, callback) {
             callback(err, null);
         } else {
             if (!result[0]) {
-                callback({ status: 404, message: 'Specified category does not exist' });
+                callback({status: 404, message: 'Specified category does not exist'});
             } else {
                 // Category exists, perform update
                 connection.query(updateSQL, (err, result) => {
@@ -168,14 +168,14 @@ router.get('/', function(req, res) {
     }
 });
 
-router.get('/:cid', function (req, res) {
+router.get('/:cid', function(req, res) {
     console.log('Getting specified Category');
     getCategory(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
             res.setHeader('Content-Type', 'application/json');
-            res.status(err.status || 400).json({ status: err.status, message: err.message });
+            res.status(err.status || 400).json({status: err.status, message: err.message});
         } else {
             res.setHeader('Content-Type', 'application/json');
             res.status(200).json(data);
