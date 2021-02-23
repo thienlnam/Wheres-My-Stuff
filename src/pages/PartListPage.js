@@ -6,7 +6,7 @@ import * as API from '../api';
 
 const PartListPage = () => {
     const queryClient = useQueryClient();
-    const {data} = useQuery('parts', API.getParts);
+    const {data} = useQuery('parts', API.getParts(''));
 
     const updatePartMutation = useMutation(API.updatePart, {
         onError: (error) => {

@@ -3,10 +3,13 @@ import axios from 'axios';
 const url = process.env.REACT_APP_HOST;
 
 /** ----- PART API CALLS ----- */
-export const getParts = async () => {
+export const getParts = async (name = '') => {
     const {data} = await axios.request({
         method: 'GET',
         url: `${url}/Parts`,
+        params: {
+            name: name,
+        },
     });
     return data;
 };
