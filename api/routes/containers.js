@@ -118,7 +118,7 @@ function updateContainer(req, callback) {
  */
 function deleteContainer(req, callback) {
     const containerID = req.params.cid;
-    const updateSQL = mysql.format('DELETE FROM WMSInventory.Containers WHERE containerID = ?', [
+    const updateSQL = mysql.format('DELETE FROM wmsinventory.Containers WHERE containerID = ?', [
         containerID,
     ]);
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
