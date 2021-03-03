@@ -13,7 +13,7 @@ const DashboardPage = () => {
         },
         {
             command: 'Where is (my) (the) *',
-            callback: (item) => setMessage(`${item} is located in the Red Tool Box (A1), and Black Storage Cabinet (Top Drawer).`),
+            callback: (item) => handleVoiceCommand('find', item),
         },
         {
             command: 'Where\'s (my) (the) *',
@@ -57,7 +57,7 @@ const DashboardPage = () => {
                     const itemOccurances = item[1].length;
                     message += `You have ${itemOccurances} location(s) where ${itemName} exists.\n`;
 
-                    item[1].forEach(detail => {
+                    item[1].forEach((detail) => {
                         console.log('detail:', detail);
                         const containerName = detail.containerName;
                         const containerLocation = detail.location;

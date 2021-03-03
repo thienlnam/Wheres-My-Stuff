@@ -40,7 +40,6 @@ function createPart(req, callback) {
 function getParts(req, callback) {
     let sql = '';
     const nameFilter = req.query.name;
-    console.log(nameFilter);
     if (nameFilter) {
         sql = mysql.format('SELECT Parts.name AS partName, Containers.name as containerName, size, location, quantity FROM Parts, ContainedBy, Containers WHERE Parts.name LIKE CONCAT(\'%\', ?, \'%\') AND ContainedBy.partID = Parts.partID AND ContainedBy.containerID = Containers.containerID', [
             nameFilter,

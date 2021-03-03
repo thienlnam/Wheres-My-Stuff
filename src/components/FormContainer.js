@@ -2,7 +2,7 @@ import React from 'react';
 import {Card, Form, Input, Button} from 'antd';
 import PropTypes from 'prop-types';
 
-const CreateItem = (props) => {
+const FormContainer = (props) => {
     const [form] = Form.useForm();
     const formInputs = props.formInputs.map((input, index) => {
         return (
@@ -31,6 +31,7 @@ const CreateItem = (props) => {
                 layout='inline'
                 onFinish={(values) => onSubmit(values)}
             >
+                {props.children}
                 {formInputs}
                 <Form.Item>
                     <Button type="primary" htmlType="submit">Submit</Button>
@@ -40,10 +41,11 @@ const CreateItem = (props) => {
     );
 };
 
-CreateItem.propTypes = {
+FormContainer.propTypes = {
     formInputs: PropTypes.array.isRequired,
-    onSubmit: PropTypes.func.isRequired,
+    onSubmit: PropTypes.any.isRequired,
     title: PropTypes.string.isRequired,
+    children: PropTypes.children,
 };
 
-export default CreateItem;
+export default FormContainer;
