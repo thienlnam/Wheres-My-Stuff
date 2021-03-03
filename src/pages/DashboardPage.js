@@ -35,16 +35,13 @@ const DashboardPage = () => {
 
     const handleVoiceCommand = async (commandType, item) => {
         if (commandType === 'find') {
-            setMessage(`Found ${item}!`);
             const result = await API.getParts(item);
             if (!result) {
-                setMessage(`Sorry, I wasn't able to find any instances of `);
+                setMessage(`Sorry, I wasn't able to find any instances of ${item}`);
             } else {
                 // Group the items by name
                 let message = '';
-                console.log(result);
                 const grouped = _.groupBy(result, 'partName');
-                console.log('GROUPED:', grouped);
 
                 // Count number of returned items (unique item names)
                 if (Object.keys(grouped).length > 1) {
@@ -61,7 +58,9 @@ const DashboardPage = () => {
                         console.log('detail:', detail);
                         const containerName = detail.containerName;
                         const containerLocation = detail.location;
-                        message += `${detail.quantity} in the ${containerName} ${containerLocation ? ` located in the ${containerLocation}.` : '.'}\n`;
+                        message += `${detail.quantity} in the ${containerName} ${containerLocation ?
+                            ` located in the ${containerLocation}.` :
+                            '.'}\n`;
                     });
                     message += '\n';
                 });

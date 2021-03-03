@@ -47,7 +47,7 @@ function getParts(req, callback) {
     } else {
         sql = mysql.format('SELECT * FROM Parts');
     }
-    console.log(sql);
+
     connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
