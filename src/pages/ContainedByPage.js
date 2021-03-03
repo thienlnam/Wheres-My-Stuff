@@ -3,7 +3,6 @@ import Table from '../components/Table';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
 import * as API from '../api';
 
-
 const ContainedByPage = () => {
     const queryClient = useQueryClient();
     const {data} = useQuery('partContainers', API.getPartContainers);
@@ -16,7 +15,7 @@ const ContainedByPage = () => {
         },
     });
 
-    const deletePartMutation = useMutation(API.deletePartContainer, {
+    const deletePartContainerMutation = useMutation(API.deletePartContainer, {
         onError: (error) => {
             console.log(error);
         },
@@ -27,6 +26,7 @@ const ContainedByPage = () => {
 
     return (
         <div>
+            <br/><br/>
             <Table
                 columns={[
                     {title: 'Name', field: 'partName', editable: 'never'},
@@ -51,7 +51,7 @@ const ContainedByPage = () => {
                         }),
                     onRowDelete: (oldData) =>
                         new Promise((resolve, reject) => {
-                            deletePartMutation.mutate(oldData);
+                            deletePartContainerMutation.mutate(oldData);
                             resolve();
                         }),
                 }}

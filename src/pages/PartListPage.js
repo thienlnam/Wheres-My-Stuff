@@ -1,12 +1,12 @@
 import React from 'react';
 import Table from '../components/Table';
-import CreateItem from '../components/CreateItem';
+import FormContainer from '../components/FormContainer';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
 import * as API from '../api';
 
 const PartListPage = () => {
     const queryClient = useQueryClient();
-    const {data} = useQuery('parts', API.getParts);
+    const {data} = useQuery('parts', () => API.getParts());
 
     const updatePartMutation = useMutation(API.updatePart, {
         onError: (error) => {
@@ -41,7 +41,7 @@ const PartListPage = () => {
 
     return (
         <div>
-            <CreateItem title='Add an item' onSubmit={createPartMutation.mutate} formInputs={formInputs} />
+            <FormContainer title='Add an item' onSubmit={createPartMutation.mutate} formInputs={formInputs} />
             <br /><br />
             <Table
                 columns={[
