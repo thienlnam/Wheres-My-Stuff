@@ -1,22 +1,22 @@
 // Require express and body-parser
-const { conversation } = require('@assistant/conversation');
+const {conversation} = require('@assistant/conversation');
 const functions = require('firebase-functions');
-const express = require("express");
-const bodyParser = require("body-parser");
+const express = require('express');
+const bodyParser = require('body-parser');
 
 // Initialize express and define a port
 const app = express();
-const app1 = conversation({ debug: true });
+const app1 = conversation({debug: true});
 const PORT = 3001;
 
 // Tell express to use body-parser's JSON parsing
 app.use(bodyParser.json());
 
-app1.handle('getItem', conv => {
+app1.handle('getItem', (conv) => {
     conv.add(`Searching for the part: ${conv.session.params.ItemToFind}`);
 });
 
-app.post("/hook", (req, res) => {
+app.post('/hook', (req, res) => {
     console.log(req.body); // Call your action on the request here
     res.status(200).end(); // Responding is important
 });

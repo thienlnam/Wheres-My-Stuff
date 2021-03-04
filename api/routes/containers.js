@@ -45,8 +45,8 @@ function getContainers(req, callback) {
     let selectSQL = '';
     if (nameFilter) {
         selectSQL = mysql.format('SELECT containerID, name, size, location, description FROM Containers WHERE name LIKE CONCAT(\'%\', ?, \'%\')', [
-            nameFilter
-            ]);
+            nameFilter,
+        ]);
     } else {
         selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers');
     }

@@ -57,7 +57,7 @@ export const createContainer = async (containerData) => {
 /** ----- CONTAINER API CALLS END ----- */
 
 /** ----- CONTAINED BY API CALLS ----- */
-export const getPartContainers = async () => {
+export const getContainedBy = async () => {
     const {data} = await axios.request({
         method: 'GET',
         url: `${url}/Parts/Containers`,
@@ -65,13 +65,19 @@ export const getPartContainers = async () => {
     return data;
 };
 
-export const updatePartContainer = async (partContainerData) => {
+export const updateContainedBy = async (partContainerData) => {
     const {data} = await axios.patch(`${url}/Parts/${partContainerData.partID}/Containers/${partContainerData.containerID}`, partContainerData);
     return data;
 };
 
-export const deletePartContainer = async (partContainerData) => {
+export const deleteContainedBy = async (partContainerData) => {
     const {data} = await axios.delete(`${url}/Parts/${partContainerData.partID}/Containers/${partContainerData.containerID}`);
+    return data;
+};
+
+export const createContainedBy = async (partContainerData) => {
+    console.log(partContainerData);
+    const {data} = await axios.post(`${url}/Parts/${partContainerData.partID}/Containers/${partContainerData.containerID}`, partContainerData);
     return data;
 };
 
