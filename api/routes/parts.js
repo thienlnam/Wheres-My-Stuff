@@ -64,8 +64,15 @@ function getParts(req, callback) {
  * @param {*} callback
  */
 function getPartContainers(req, callback) {
-    let sql;
-    sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier  FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.partID = cb.partID AND c.containerID = cb.containerID;');
+    let sql = '';
+    const nameFilter = req.query.name;
+    if (nameFilter) {
+        sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.name LIKE CONCAT(\'%\', ?, \'%\') AND p.partID = cb.partID AND c.containerID = cb.containerID;', [
+            nameFilter,
+            ]);
+    } else {
+        sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.partID = cb.partID AND c.containerID = cb.containerID;');
+    }
     connection.query(sql, function(err, result) {
         if (err) {
             callback(err, null);
