@@ -2,11 +2,24 @@ import React from 'react';
 import Table from '../components/Table';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
 import * as API from '../api';
+import {
+    Form,
+    Select,
+} from 'antd';
+import FormContainer from '../components/FormContainer';
 
 const ContainedByPage = () => {
     const queryClient = useQueryClient();
-    const {data} = useQuery('partContainers', API.getPartContainers);
-    const updatePartMutation = useMutation(API.updatePartContainer, {
+    const queryMultiple = () => {
+        const {data} = useQuery('partContainers', API.getContainedBy);
+        const containerData = useQuery('containers', API.getContainers);
+        const partsData = useQuery('parts', () => API.getParts());
+        return [data, containerData, partsData];
+    };
+
+    const [data, containerData, partsData] = queryMultiple();
+
+    const updatePartMutation = useMutation(API.updateContainedBy, {
         onError: (error) => {
             console.log(error);
         },
@@ -15,7 +28,7 @@ const ContainedByPage = () => {
         },
     });
 
-    const deletePartContainerMutation = useMutation(API.deletePartContainer, {
+    const deleteContainedByMutation = useMutation(API.deleteContainedBy, {
         onError: (error) => {
             console.log(error);
         },
@@ -24,8 +37,62 @@ const ContainedByPage = () => {
         },
     });
 
+    const createContainedByMutation = useMutation(API.createContainedBy, {
+        onError: (error) => {
+            console.log(error);
+        },
+        onSuccess: () => {
+            queryClient.refetchQueries('partContainers');
+        },
+    });
+
+    const formInputs = [
+        {label: 'Identifier', name: 'identifier', required: false},
+        {label: 'Quantity', name: 'quantity', required: true, type: 'number', errorMessage: 'Please enter an item name!'},
+    ];
+
+    let containerDataSelect = '';
+    if (containerData.data) {
+        containerDataSelect = containerData.data.map((container) => {
+            const containerID = container.containerID;
+            return <Select.Option key={containerID} value={containerID}>{container.name}</Select.Option>;
+        });
+    }
+
+    let partsDataSelect = '';
+    if (partsData.data) {
+        partsDataSelect = partsData.data.map((part) => {
+            const partID = part.partID;
+            return <Select.Option key={partID} value={partID}>{part.name}</Select.Option>;
+        });
+    }
+
     return (
         <div>
+            <FormContainer title="Add Part To Container" onSubmit={createContainedByMutation.mutate} formInputs={formInputs}>
+                <Form.Item
+                    label="Part"
+                    name="partID"
+                >
+                    <Select
+                        dropdownStyle={{minWidth: '30%'}}
+                        placeholder="Part Name"
+                    >
+                        {partsDataSelect}
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    label="Container"
+                    name="containerID"
+                >
+                    <Select
+                        dropdownStyle={{minWidth: '30%'}}
+                        placeholder="Container Name"
+                    >
+                        {containerDataSelect}
+                    </Select>
+                </Form.Item>
+            </FormContainer>
             <br/><br/>
             <Table
                 columns={[
@@ -51,7 +118,7 @@ const ContainedByPage = () => {
                         }),
                     onRowDelete: (oldData) =>
                         new Promise((resolve, reject) => {
-                            deletePartContainerMutation.mutate(oldData);
+                            deleteContainedByMutation.mutate(oldData);
                             resolve();
                         }),
                 }}

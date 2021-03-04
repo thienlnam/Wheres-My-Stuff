@@ -58,18 +58,42 @@ function getParts(req, callback) {
 }
 
 /**
+ * Creates a ContainedBy in the ContainedBy table
+ *
+ * @param {*} req
+ * @param {*} callback
+ */
+function createContainedBys(req, callback) {
+    const partID = req.params.pid;
+    const containerID = req.params.cid;
+    const sql = mysql.format('INSERT INTO wmsinventory.ContainedBy (partID, containerID, identifier, quantity) VALUES (?, ?, ?, ?)', [
+        partID,
+        containerID,
+        req.body.identifier || '',
+        req.body.quantity,
+    ]);
+    connection.query(sql, function(err, result) {
+        if (err) {
+            callback(err, null);
+        } else {
+            callback(null, result);
+        }
+    });
+}
+
+/**
  * Get all parts and container pairs
  *
  * @param {*} req
  * @param {*} callback
  */
-function getPartContainers(req, callback) {
+function getContainedBy(req, callback) {
     let sql = '';
     const nameFilter = req.query.name;
     if (nameFilter) {
         sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.name LIKE CONCAT(\'%\', ?, \'%\') AND p.partID = cb.partID AND c.containerID = cb.containerID;', [
             nameFilter,
-            ]);
+        ]);
     } else {
         sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.partID = cb.partID AND c.containerID = cb.containerID;');
     }
@@ -88,7 +112,7 @@ function getPartContainers(req, callback) {
  * @param {*} req
  * @param {*} callback
  */
-function updatePartContainer(req, callback) {
+function updateContainedBy(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
     const updateSQL = mysql.format('UPDATE wmsinventory.ContainedBy SET identifier = ?, quantity = ? WHERE partID = ? AND containerID = ?', [
@@ -130,7 +154,7 @@ function updatePartContainer(req, callback) {
  * @param {*} req
  * @param {*} callback
  */
-function deletePartContainer(req, callback) {
+function deleteContainedBy(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
     const deleteSQL = mysql.format('DELETE FROM WMSInventory.ContainedBy WHERE partID = ? AND containerID = ?', [
@@ -301,7 +325,7 @@ router.get('/', function(req, res) {
 
 router.get('/Containers', function(req, res) {
     console.log('Getting all Part Containers' );
-    getPartContainers(req, callback);
+    getContainedBy(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
@@ -359,9 +383,30 @@ router.delete('/:pid', function(req, res) {
     }
 });
 
+router.post('/:pid/Containers/:cid', function(req, res) {
+    console.log('Creating Part / Container Pair');
+    createContainedBys(req, callback);
+    function callback(err, data) {
+        if (err) {
+            console.log(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.status(err.status || 400).json({status: err.status, message: err.message});
+        } else {
+            res.setHeader('Content-Type', 'application/json');
+            res.status(201).json({
+                id: data.insertId,
+                name: req.body.name,
+                category: req.body.category,
+                quantity: req.body.quantity,
+                locaton: req.body.location,
+            });
+        }
+    }
+});
+
 router.patch('/:pid/Containers/:cid', function(req, res) {
     console.log('Updating Part / Container Pair');
-    updatePartContainer(req, callback);
+    updateContainedBy(req, callback);
     function callback(err, data) {
         if (err) {
             console.log(err);
@@ -376,7 +421,7 @@ router.patch('/:pid/Containers/:cid', function(req, res) {
 
 router.delete('/:pid/Containers/:cid', function(req, res) {
     console.log('Deleting Part / Container Pair');
-    deletePartContainer(req, callback);
+    deleteContainedBy(req, callback);
     function callback(err) {
         if (err) {
             console.log(err);
