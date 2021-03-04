@@ -41,7 +41,15 @@ function createContainer(req, callback) {
  * @param {*} callback
  */
 function getContainers(req, callback) {
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers');
+    const nameFilter = req.query.name;
+    let selectSQL = '';
+    if (nameFilter) {
+        selectSQL = mysql.format('SELECT containerID, name, size, location, description FROM Containers WHERE name LIKE CONCAT(\'%\', ?, \'%\')', [
+            nameFilter
+            ]);
+    } else {
+        selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers');
+    }
     connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
@@ -118,7 +126,7 @@ function updateContainer(req, callback) {
  */
 function deleteContainer(req, callback) {
     const containerID = req.params.cid;
-    const updateSQL = mysql.format('DELETE FROM WMSInventory.Containers WHERE containerID = ?', [
+    const deleteSQL = mysql.format('DELETE FROM wmsinventory.Containers WHERE containerID = ?', [
         containerID,
     ]);
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
@@ -134,7 +142,7 @@ function deleteContainer(req, callback) {
                 callback({status: 404, message: 'Specified container does not exist'});
             } else {
                 // Container exists, perform update
-                connection.query(updateSQL, (err, result) => {
+                connection.query(deleteSQL, (err, result) => {
                     if (err) {
                         callback(err, null);
                     } else {
