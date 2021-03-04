@@ -106,7 +106,7 @@ function updateCategory(req, callback) {
  */
 function deleteCategory(req, callback) {
     const categoryID = req.params.cid;
-    const updateSQL = mysql.format('DELETE FROM WMSInventory.Categories WHERE categoryID = ?', [
+    const updateSQL = mysql.format('DELETE FROM wmsinventory.Categories WHERE categoryID = ?', [
         categoryID,
     ]);
     const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
