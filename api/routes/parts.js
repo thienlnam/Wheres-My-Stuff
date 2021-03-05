@@ -157,7 +157,7 @@ function updateContainedBy(req, callback) {
 function deleteContainedBy(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
-    const deleteSQL = mysql.format('DELETE FROM WMSInventory.ContainedBy WHERE partID = ? AND containerID = ?', [
+    const deleteSQL = mysql.format('DELETE FROM wmsinventory.ContainedBy WHERE partID = ? AND containerID = ?', [
         partID,
         containerID,
     ]);
@@ -256,7 +256,7 @@ function updatePart(req, callback) {
  */
 function deletePart(req, callback) {
     const partID = req.params.pid;
-    const deleteSQL = mysql.format('DELETE FROM WMSInventory.Parts WHERE partID = ?', [
+    const deleteSQL = mysql.format('DELETE FROM wmsinventory.Parts WHERE partID = ?', [
         partID,
     ]);
 
