@@ -100,7 +100,6 @@ const DashboardPage = () => {
     }
 
     const exportDataClick = () => {
-        setMessage("Exporting Data");
         setExport(exportData);
     }
 
@@ -118,14 +117,19 @@ const DashboardPage = () => {
                     <Button onClick={clearButtonClick} className={'buttonLeftMargin'} icon={<CloseOutlined />}>
                         Clear
                     </Button>
-                    <Button onClick={exportDataClick} className={'buttonLeftMargin'}>
-                        Export Data
-                    </Button>
+                    
                 </div>
                 {transcript}
             </Card>
             <Card style={{whiteSpace: 'pre-wrap'}}>
                 {message}
+            </Card>
+            <Card title="Export Your Data to CSV" bordered={false}>
+                <div style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                    <Button onClick={exportDataClick} className={'buttonLeftMargin'}>
+                        Export Data
+                    </Button>
+                </div>
             </Card>
         </div>
 
