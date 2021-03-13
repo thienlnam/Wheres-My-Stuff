@@ -74,6 +74,7 @@ const DashboardPage = () => {
     const {transcript, resetTranscript} = useSpeechRecognition({commands});
     const [isListening, updateIsListening] = useState(false);
     const [message, setMessage] = useState('');
+    const [data, setExport] = useState('');
 
     if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
         return null;
@@ -94,6 +95,15 @@ const DashboardPage = () => {
         }
     };
 
+    const exportData = async () => {
+        return await API.exportData();
+    }
+
+    const exportDataClick = () => {
+        setMessage("Exporting Data");
+        setExport(exportData);
+    }
+
     return (
         <div className="site-card-wrapper">
             <Card title="Voice Control" bordered={false}>
@@ -106,7 +116,10 @@ const DashboardPage = () => {
                         {isListening ? 'Stop' : 'Start'}
                     </Button>
                     <Button onClick={clearButtonClick} className={'buttonLeftMargin'} icon={<CloseOutlined />}>
-            Clear
+                        Clear
+                    </Button>
+                    <Button onClick={exportDataClick} className={'buttonLeftMargin'}>
+                        Export Data
                     </Button>
                 </div>
                 {transcript}

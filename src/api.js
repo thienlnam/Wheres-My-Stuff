@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const url = process.env.REACT_APP_HOST;
+const FileDownload = require('js-file-download');
 
 /** ----- PART API CALLS ----- */
 export const getParts = async (name = '') => {
@@ -82,3 +83,14 @@ export const createContainedBy = async (partContainerData) => {
 };
 
 /** ----- CONTAINED BY API CALLS END ----- */
+
+/** ----- EXPORT API CALL ----- */
+export const exportData = async () => {
+    const { data } = await axios.request({
+        method: 'GET',
+        url: `${url}/Export`,
+        responseType: 'blob',
+    });
+    FileDownload(data, 'output.csv');
+};
+/** ----- EXPORT API CALL END ----- */
