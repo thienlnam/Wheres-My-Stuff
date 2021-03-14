@@ -74,7 +74,6 @@ const DashboardPage = () => {
     const {transcript, resetTranscript} = useSpeechRecognition({commands});
     const [isListening, updateIsListening] = useState(false);
     const [message, setMessage] = useState('');
-    const [data, setExport] = useState('');
 
     if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
         return null;
@@ -97,11 +96,7 @@ const DashboardPage = () => {
 
     const exportData = async () => {
         return await API.exportData();
-    }
-
-    const exportDataClick = () => {
-        setExport(exportData);
-    }
+    };
 
     return (
         <div className="site-card-wrapper">
@@ -117,16 +112,16 @@ const DashboardPage = () => {
                     <Button onClick={clearButtonClick} className={'buttonLeftMargin'} icon={<CloseOutlined />}>
                         Clear
                     </Button>
-                    
                 </div>
                 {transcript}
             </Card>
             <Card style={{whiteSpace: 'pre-wrap'}}>
                 {message}
             </Card>
+            <br /><br />
             <Card title="Export Your Data to CSV" bordered={false}>
-                <div style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                    <Button onClick={exportDataClick} className={'buttonLeftMargin'}>
+                <div style={{textAlign: 'center', verticalAlign: 'middle'}}>
+                    <Button onClick={exportData} className={'buttonLeftMargin'}>
                         Export Data
                     </Button>
                 </div>

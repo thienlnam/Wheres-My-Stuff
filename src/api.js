@@ -86,11 +86,13 @@ export const createContainedBy = async (partContainerData) => {
 
 /** ----- EXPORT API CALL ----- */
 export const exportData = async () => {
-    const { data } = await axios.request({
+    const {data} = await axios.request({
         method: 'GET',
         url: `${url}/Export`,
         responseType: 'blob',
     });
-    FileDownload(data, 'output.csv');
+
+
+    FileDownload(data, `Backup-${new Date().toLocaleString()}.csv`);
 };
 /** ----- EXPORT API CALL END ----- */
