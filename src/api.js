@@ -16,6 +16,7 @@ export const getParts = async (name = '') => {
 };
 
 export const updatePart = async (partData) => {
+    console.log(partData);
     const {data} = await axios.patch(`${url}/Parts/${partData.partID}`, partData);
     return data;
 };
@@ -84,6 +85,46 @@ export const createContainedBy = async (partContainerData) => {
 
 /** ----- CONTAINED BY API CALLS END ----- */
 
+/** ----- CATEGORIES API CALL ----- */
+export const getCategories = async () => {
+    const {data} = await axios.get(`${url}/Categories`);
+    return data;
+}
+
+export const createCategory = async (categoryData) => {
+    const {data} = await axios.post(`${url}/Categories`, categoryData);
+    return data;
+}
+
+export const updateCategory = async (categoryData) => {
+    const {data} = await axios.patch(`${url}/Categories/${categoryData.categoryID}`, categoryData);
+    return data;
+}
+
+export const deleteCategory = async (categoryId) => {
+    const {data} = await axios.delete(`${url}/Categories/${categoryId}`);
+    return data;
+}
+
+export const createCategorizedBy = async (partID, categoryID) => {
+    try {
+        const { data } = await axios.post(`${url}/Categorized/Category/${categoryID}/Parts/${partID}`);
+        return data;
+    } catch (err) {
+        console.log(err.message + ': Specified category already used');
+    }
+}
+
+export const removeCategorizedBy = async (partID, categoryID) => {
+    try {
+        const { data } = await axios.delete(`${url}/Categorized/Category/${categoryID}/Parts/${partID}`);
+        return data;
+    } catch (err) {
+        console.log(err.message + ': Part does not have specified category');
+    }
+}
+
+/** ----- CATEGORIES API CALLS END ----- */
 /** ----- EXPORT API CALL ----- */
 export const exportData = async () => {
     const {data} = await axios.request({

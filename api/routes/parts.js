@@ -41,11 +41,11 @@ function getParts(req, callback) {
     let sql = '';
     const nameFilter = req.query.name;
     if (nameFilter) {
-        sql = mysql.format('SELECT Parts.name AS partName, Containers.name as containerName, size, location, quantity FROM Parts, ContainedBy, Containers WHERE Parts.name LIKE CONCAT(\'%\', ?, \'%\') AND ContainedBy.partID = Parts.partID AND ContainedBy.containerID = Containers.containerID', [
+        sql = mysql.format('SELECT Parts.name AS partName, Parts.partID, Containers.name as containerName, size, location, quantity FROM Parts, ContainedBy, Containers WHERE Parts.name LIKE CONCAT(\'%\', ?, \'%\') AND ContainedBy.partID = Parts.partID AND ContainedBy.containerID = Containers.containerID', [
             nameFilter,
         ]);
     } else {
-        sql = mysql.format('SELECT * FROM Parts');
+        sql = mysql.format('SELECT * FROM (SELECT P.partID, P.name, group_concat(DISTINCT C.name) AS categories FROM wmsinventory.parts P, wmsinventory.categorizedBy CB, wmsinventory.categories C WHERE P.partID = CB.partID AND C.categoryID = CB.categoryID GROUP BY P.name ORDER BY P.partID) AS A RIGHT JOIN (SELECT P1.partID, P1.name FROM wmsinventory.parts P1) AS B ON A.partID = B.partID GROUP BY B.partID;');
     }
 
     connection.query(sql, function(err, result) {
