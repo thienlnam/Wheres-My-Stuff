@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const url = process.env.REACT_APP_HOST;
+const FileDownload = require('js-file-download');
 
 /** ----- PART API CALLS ----- */
 export const getParts = async (name = '') => {
@@ -124,3 +125,15 @@ export const removeCategorizedBy = async (partID, categoryID) => {
 }
 
 /** ----- CATEGORIES API CALLS END ----- */
+/** ----- EXPORT API CALL ----- */
+export const exportData = async () => {
+    const {data} = await axios.request({
+        method: 'GET',
+        url: `${url}/Export`,
+        responseType: 'blob',
+    });
+
+
+    FileDownload(data, `Backup-${new Date().toLocaleString()}.csv`);
+};
+/** ----- EXPORT API CALL END ----- */
