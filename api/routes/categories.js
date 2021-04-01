@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
  * @param {*} callback
  */
 function createCategory(req, callback) {
-    const createSQL = mysql.format('INSERT INTO wmsinventory.Categories (name) VALUES (?)', [
+    const createSQL = mysql.format('INSERT INTO Categories (name) VALUES (?)', [
         req.body.name,
     ]);
     connection.query(createSQL, function(err, result) {
@@ -38,7 +38,7 @@ function createCategory(req, callback) {
  * @param {*} callback
  */
 function getCategories(req, callback) {
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories');
+    const selectSQL = mysql.format('SELECT * FROM Categories');
     connection.query(selectSQL, function(err, result) {
         if (err) {
             callback(err, null);
@@ -55,7 +55,7 @@ function getCategories(req, callback) {
  * @param {*} callback
  */
 function getCategory(req, callback) {
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Categories WHERE categoryID = ?', [
         req.params.cid,
     ]);
     connection.query(selectSQL, function(err, result) {
@@ -76,11 +76,11 @@ function getCategory(req, callback) {
 // Bug when updating name and printing updated object
 function updateCategory(req, callback) {
     const categoryID = req.params.cid;
-    const updateSQL = mysql.format('UPDATE wmsinventory.Categories SET name = ? WHERE categoryID = ?', [
+    const updateSQL = mysql.format('UPDATE Categories SET name = ? WHERE categoryID = ?', [
         req.body.name,
         categoryID,
     ]);
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Categories WHERE categoryID = ?', [
         categoryID,
     ]);
     connection.query(updateSQL, function(err, result) {
@@ -106,10 +106,10 @@ function updateCategory(req, callback) {
  */
 function deleteCategory(req, callback) {
     const categoryID = req.params.cid;
-    const updateSQL = mysql.format('DELETE FROM wmsinventory.Categories WHERE categoryID = ?', [
+    const updateSQL = mysql.format('DELETE FROM Categories WHERE categoryID = ?', [
         categoryID,
     ]);
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Categories WHERE categoryID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Categories WHERE categoryID = ?', [
         categoryID,
     ]);
     // Check if category actually exists with a SELECT before updating

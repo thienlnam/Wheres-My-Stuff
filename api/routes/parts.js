@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
  * @param {*} callback
  */
 function createPart(req, callback) {
-    const sql = mysql.format('INSERT INTO wmsinventory.Parts (name) VALUES (?)', [
+    const sql = mysql.format('INSERT INTO Parts (name) VALUES (?)', [
         req.body.name,
     ]);
     connection.query(sql, function(err, result) {
