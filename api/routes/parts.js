@@ -45,7 +45,7 @@ function getParts(req, callback) {
             nameFilter,
         ]);
     } else {
-        sql = mysql.format('SELECT * FROM (SELECT P.partID, P.name, group_concat(DISTINCT C.name) AS categories FROM wmsinventory.parts P, wmsinventory.categorizedBy CB, wmsinventory.categories C WHERE P.partID = CB.partID AND C.categoryID = CB.categoryID GROUP BY P.name ORDER BY P.partID) AS A RIGHT JOIN (SELECT P1.partID, P1.name FROM wmsinventory.parts P1) AS B ON A.partID = B.partID GROUP BY B.partID;');
+        sql = mysql.format('SELECT * FROM (SELECT P.partID, P.name, group_concat(DISTINCT C.name) AS categories FROM Parts P, CategorizedBy CB, Categories C WHERE P.partID = CB.partID AND C.categoryID = CB.categoryID GROUP BY P.name ORDER BY P.partID) AS A RIGHT JOIN (SELECT P1.partID, P1.name FROM Parts P1) AS B ON A.partID = B.partID GROUP BY B.partID;');
     }
 
     connection.query(sql, function(err, result) {
@@ -66,7 +66,7 @@ function getParts(req, callback) {
 function createContainedBys(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
-    const sql = mysql.format('INSERT INTO wmsinventory.ContainedBy (partID, containerID, identifier, quantity) VALUES (?, ?, ?, ?)', [
+    const sql = mysql.format('INSERT INTO ContainedBy (partID, containerID, identifier, quantity) VALUES (?, ?, ?, ?)', [
         partID,
         containerID,
         req.body.identifier || '',
@@ -115,13 +115,13 @@ function getContainedBy(req, callback) {
 function updateContainedBy(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
-    const updateSQL = mysql.format('UPDATE wmsinventory.ContainedBy SET identifier = ?, quantity = ? WHERE partID = ? AND containerID = ?', [
+    const updateSQL = mysql.format('UPDATE ContainedBy SET identifier = ?, quantity = ? WHERE partID = ? AND containerID = ?', [
         req.body.identifier,
         req.body.quantity,
         partID,
         containerID,
     ]);
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.ContainedBy WHERE partID = ? AND containerID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM ContainedBy WHERE partID = ? AND containerID = ?', [
         partID,
         containerID,
     ]);
@@ -157,12 +157,12 @@ function updateContainedBy(req, callback) {
 function deleteContainedBy(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
-    const deleteSQL = mysql.format('DELETE FROM wmsinventory.ContainedBy WHERE partID = ? AND containerID = ?', [
+    const deleteSQL = mysql.format('DELETE FROM ContainedBy WHERE partID = ? AND containerID = ?', [
         partID,
         containerID,
     ]);
 
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.ContainedBy WHERE partID = ? AND containerID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM ContainedBy WHERE partID = ? AND containerID = ?', [
         partID,
         containerID,
     ]);
@@ -197,7 +197,7 @@ function deleteContainedBy(req, callback) {
  * @param {*} callback
  */
 function getPart(req, callback) {
-    const sql = mysql.format('SELECT * FROM wmsinventory.Parts WHERE partID = ?', [
+    const sql = mysql.format('SELECT * FROM Parts WHERE partID = ?', [
         req.params.pid,
     ]);
     console.log(sql);
@@ -218,11 +218,11 @@ function getPart(req, callback) {
  */
 function updatePart(req, callback) {
     const partID = req.params.pid;
-    const updateSQL = mysql.format('UPDATE wmsinventory.Parts SET name = ? WHERE partID = ?', [
+    const updateSQL = mysql.format('UPDATE Parts SET name = ? WHERE partID = ?', [
         req.body.name,
         partID,
     ]);
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Parts WHERE partID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Parts WHERE partID = ?', [
         partID,
     ]);
 
@@ -256,11 +256,11 @@ function updatePart(req, callback) {
  */
 function deletePart(req, callback) {
     const partID = req.params.pid;
-    const deleteSQL = mysql.format('DELETE FROM wmsinventory.Parts WHERE partID = ?', [
+    const deleteSQL = mysql.format('DELETE FROM Parts WHERE partID = ?', [
         partID,
     ]);
 
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Parts WHERE partID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Parts WHERE partID = ?', [
         partID,
     ]);
 
