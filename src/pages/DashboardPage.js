@@ -3,6 +3,7 @@ import {Card, Button} from 'antd';
 import _ from 'lodash';
 import {PlayCircleOutlined, CloseOutlined, PauseCircleOutlined} from '@ant-design/icons';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
+import Modal from 'react-bootstrap/Modal';
 import * as API from '../api';
 
 const DashboardPage = () => {
@@ -75,8 +76,52 @@ const DashboardPage = () => {
     const [isListening, updateIsListening] = useState(false);
     const [message, setMessage] = useState('');
 
+    const exportData = async () => {
+        return await API.exportData();
+    };
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-        return null;
+        console.log("ERROR: This browser does not support speech recognition. Suggest using Google Chrome or Microsoft Edge");
+        return (
+            <div className="site-card-wrapper">
+                <Button onClick={handleShow}>
+                    ?
+            </Button>
+
+                <Modal show={show} onHide={handleClose} animation={false}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Voice Commands Help</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p><b>This page is for using voice commands and exporting/importing inventory information</b></p><br />
+                        <p>To start the voice command, click the start button and speech your command</p><br />
+                        <p>To clear the transcript, click the reset button</p><br />
+                        <p>The export button will save a .csv file with the information of the inventory. This can be used as a backup file</p><br />
+                        <p>The import button will prompt for a .csv file and attempt to import the data into the inventory</p><br />
+                        <p>*Note: If the voice command box does not show up, try using a different browser such as Google Chrome or Microsoft Edge</p>
+                        <p>*Note 1: If voice is not be detected, allow the site to use your microphone by clicking the icon to the left of the URL and allowing microphone use</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={handleClose}>
+                            Close
+                    </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                <Card title="Export Your Data to CSV" bordered={false}>
+                    <div style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                        <Button onClick={exportData} className={'buttonLeftMargin'}>
+                            Export Data
+                    </Button>
+                    </div>
+                </Card>
+            </div>
+            );
     }
 
     const clearButtonClick = () => {
@@ -94,12 +139,24 @@ const DashboardPage = () => {
         }
     };
 
-    const exportData = async () => {
-        return await API.exportData();
-    };
-
     return (
         <div className="site-card-wrapper">
+            <Button onClick={handleShow}>
+                ?
+            </Button>
+
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Voice Commands Help</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Lorem Ipsum</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <Card title="Voice Control" bordered={false}>
                 <div style={{textAlign: 'center', verticalAlign: 'middle'}}>
                     <Button
