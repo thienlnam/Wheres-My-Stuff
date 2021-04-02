@@ -80,50 +80,6 @@ const DashboardPage = () => {
         return await API.exportData();
     };
 
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
-        console.log("ERROR: This browser does not support speech recognition. Suggest using Google Chrome or Microsoft Edge");
-        return (
-            <div className="site-card-wrapper">
-                <Button onClick={handleShow}>
-                    ?
-            </Button>
-
-                <Modal show={show} onHide={handleClose} animation={false}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Voice Commands Help</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p><b>This page is for using voice commands and exporting/importing inventory information</b></p><br />
-                        <p>To start the voice command, click the start button and speech your command</p><br />
-                        <p>To clear the transcript, click the reset button</p><br />
-                        <p>The export button will save a .csv file with the information of the inventory. This can be used as a backup file</p><br />
-                        <p>The import button will prompt for a .csv file and attempt to import the data into the inventory</p><br />
-                        <p>*Note: If the voice command box does not show up, try using a different browser such as Google Chrome or Microsoft Edge</p>
-                        <p>*Note 1: If voice is not be detected, allow the site to use your microphone by clicking the icon to the left of the URL and allowing microphone use</p>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="primary" onClick={handleClose}>
-                            Close
-                    </Button>
-                    </Modal.Footer>
-                </Modal>
-
-                <Card title="Export Your Data to CSV" bordered={false}>
-                    <div style={{ textAlign: 'center', verticalAlign: 'middle' }}>
-                        <Button onClick={exportData} className={'buttonLeftMargin'}>
-                            Export Data
-                    </Button>
-                    </div>
-                </Card>
-            </div>
-            );
-    }
-
     const clearButtonClick = () => {
         resetTranscript();
         setMessage('');
@@ -139,19 +95,63 @@ const DashboardPage = () => {
         }
     };
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const [showCommand, setShowCommand] = useState(false);
+
+    const handleCloseCommand = () => setShowCommand(false);
+    const handleShowCommand = () => setShowCommand(true);
+
     return (
         <div className="site-card-wrapper">
             <Button onClick={handleShow}>
                 ?
+            </Button>
+            <Button onClick={handleShowCommand}>
+                Commands
             </Button>
 
             <Modal show={show} onHide={handleClose} animation={false}>
                 <Modal.Header closeButton>
                     <Modal.Title>Voice Commands Help</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Lorem Ipsum</Modal.Body>
+                <Modal.Body>
+                    <p><b>This page is for using voice commands and exporting/importing inventory information</b></p><br />
+                    <p>To start the voice command, click the start button and speech your command</p><br />
+                    <p>To clear the transcript, click the reset button</p><br />
+                    <p>The export button will save a .csv file with the information of the inventory. This can be used as a backup file</p><br />
+                    <p>The import button will prompt for a .csv file and attempt to import the data into the inventory</p><br />
+                    <p>*Note: If voice is not be detected, allow the site to use your microphone by clicking the icon to the left of the URL and allowing microphone use</p><br />
+                    <p><b>Tip:</b> When naming multiple similar objects use letters instead of numbers i.e. (Screw A, Screw B, Screw H)</p>
+                </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            <Modal show={showCommand} onHide={handleCloseCommand} animation={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Voice Commands Help</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p><b>These are the supported voice commands</b></p><br />
+                    <p><b>Find:</b> Find a Part with the below commands:</p>
+                    <ul>
+                        <li>Where's my/the (Part)?</li>
+                        <li>Where is my/the (Part)?</li>
+                    </ul>
+                    <p><b>Update:</b> Update a Part with the below commands:</p>
+                    <ul>
+                        <li>Update (Part) quantity to (Number)</li>
+                    </ul>
+                    
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleCloseCommand}>
                         Close
                     </Button>
                 </Modal.Footer>
