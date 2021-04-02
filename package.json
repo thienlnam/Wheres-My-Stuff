@@ -21,7 +21,8 @@
     "react-dom": "^16.14.0",
     "react-query": "^3.5.12",
     "react-scripts": "3.4.4",
-    "react-speech-recognition": "^3.2.3"
+    "react-speech-recognition": "^3.2.3",
+    "react-bootstrap": "1.5.2"
   },
   "scripts": {
     "start": "react-scripts start",

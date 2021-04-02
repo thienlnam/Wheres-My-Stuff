@@ -1,7 +1,7 @@
 import React from 'react';
 import {Menu} from 'antd';
 import PropTypes from 'prop-types';
-import {UnorderedListOutlined, CodeSandboxOutlined, DashboardOutlined, UserOutlined, FolderOutlined, InboxOutlined} from '@ant-design/icons';
+import {UnorderedListOutlined, CodeSandboxOutlined, DashboardOutlined, UserOutlined, FolderOutlined, InboxOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import * as Constants from '../utility/constants';
 
 const Navbar = (props) => {
@@ -29,6 +29,9 @@ const Navbar = (props) => {
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_CATEGORY} icon={<FolderOutlined />}>
             Categories
+                </Menu.Item>
+                <Menu.Item key={Constants.HEADER_FAQ} icon={<QuestionCircleOutlined />}>
+            FAQ
                 </Menu.Item>
             </Menu>
         </>

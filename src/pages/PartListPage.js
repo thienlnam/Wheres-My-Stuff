@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Table from '../components/Table';
 import {
     Form,
     Select,
+    Button,
 } from 'antd';
 import FormContainer from '../components/FormContainer';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
 import * as API from '../api';
+import Modal from 'react-bootstrap/Modal';
 
 const PartListPage = () => {
     const queryClient = useQueryClient();
@@ -71,8 +73,35 @@ const PartListPage = () => {
         });
     }
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     return (
         <div>
+            <Button onClick={handleShow}>
+                ?
+            </Button>
+
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Parts Help</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p><b>This page is for adding/editing/removing parts from the inventory</b></p>
+                    <p>Parts are the components and individual parts in the inventory</p><br />
+                    <p>Add an item by specifying a name and optionally a category it belongs to</p><br />
+                    <p>Editing an item will allow the changing of the name or adding/removing categories to the item</p><br />
+                    <p>Deleting an item will remove it from the inventory and will reflect on the Part Locations page</p><br />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <FormContainer title='Add an item' onSubmit={createPartMutation.mutate} formInputs={formInputs}>
             <Form.Item
                 label="Category"
