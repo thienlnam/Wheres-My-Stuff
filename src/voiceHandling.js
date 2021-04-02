@@ -15,6 +15,13 @@ export const YES_RESPONSES = ['yes', 'sure', 'yup', 'continue'];
 export const NO_RESPONSES = ['no', 'nope', 'stop'];
 export const CANCEL_RESPONSES = ['cancel'];
 
+/**
+ * Handle start commands where we match the command and item information
+ * @param {*} commandType FIND | UPDATE
+ * @param {*} data Data about the item {'item': name} provided by user
+ * @param {*} dispatch
+ * @param {*} resetTranscript
+ */
 export const handleVoiceCommand = async (commandType, data, dispatch, resetTranscript) => {
     Handlers.setMessage(`Looking through my brain...`, dispatch);
     if (commandType === FIND) {
@@ -24,20 +31,24 @@ export const handleVoiceCommand = async (commandType, data, dispatch, resetTrans
     } else {
         Handlers.setMessage(`Sorry, I cannot handle that request yet!`, dispatch);
     }
-
-    return true;
 };
 
+/**
+ * Handle voice reponses regarding confirmation and selection and unknown input
+ * @param {*} response Response the user provided
+ * @param {*} state State of the voice handling
+ * @param {*} dispatch
+ * @param {*} resetTranscript
+ */
 export const handleVoiceResponses = async (response, state, dispatch, resetTranscript) => {
     Handlers.setErrorMessage('', dispatch);
-    console.log('response', response);
     if (state.voiceState === STATE_READY) {
         Handlers.setMessage(`Sorry, I cannot handle that request yet!`, dispatch);
-        return true;
+        return;
     } else if (state.voiceState === STATE_PENDING_SELECTION) {
         if (CANCEL_RESPONSES.includes(response)) {
             resetConversation('Conversation reset, feel free to send me a brand new command!', dispatch, resetTranscript);
-            return true;
+            return;
         }
 
         // Generate the command based on the selected item
@@ -64,7 +75,7 @@ export const handleVoiceResponses = async (response, state, dispatch, resetTrans
     } else if (state.voiceState === STATE_PENDING_CONFIRMATION) {
         if (CANCEL_RESPONSES.includes(response)) {
             resetConversation('Conversation reset, feel free to send me a brand new command!', dispatch, resetTranscript);
-            return true;
+            return;
         }
 
         if (YES_RESPONSES.includes(response)) {
@@ -83,25 +94,17 @@ export const handleVoiceResponses = async (response, state, dispatch, resetTrans
             }
         } else if (NO_RESPONSES.includes(response)) {
             resetConversation('Update cancelled!', dispatch, resetTranscript);
-        } else {
-            Handlers.setErrorMessage(`Not a valid selection! Try again or say 'Cancel'.`, dispatch);
         }
     }
 };
 
-export const handleConfirmation = async (response, state, dispatch, resetTranscript) => {
-    // Make sure that we are in a valid state to confirm
-    if (state !== STATE_PENDING_CONFIRMATION) {
-        console.log('We are not in a pending confirmation state! Nothing to say yes or no to');
-        return false;
-    }
-
-    if (!state.command) {
-        console.warn('We do not have a command queued to confirm!');
-        return false;
-    }
-};
-
+/**
+ * Helper function to set voice handler to request confirmation from the user
+ * @param {string} message Message to show to the user
+ * @param {JSON} command Update command information
+ * @param {function} dispatch
+ * @param {function} resetTranscript
+ */
 function requestConfirmation(message, command, dispatch, resetTranscript) {
     Handlers.setMessage(message, dispatch);
     Handlers.setCommand(command, dispatch);
@@ -110,6 +113,12 @@ function requestConfirmation(message, command, dispatch, resetTranscript) {
     resetTranscript();
 }
 
+/**
+ * Helper function to reset voice handler state
+ * @param {*} message Message to show to the user
+ * @param {function} dispatch
+ * @param {function} resetTranscript
+ */
 function resetConversation(message, dispatch, resetTranscript) {
     // Update our global state with new details
     Handlers.setUserChoice([], dispatch);
@@ -120,6 +129,12 @@ function resetConversation(message, dispatch, resetTranscript) {
     resetTranscript();
 }
 
+/**
+ * Function to have the user select from a list of options
+ * @param {array} options Array of options that user can select
+ * @param {function} dispatch
+ * @param {function} resetTranscript
+ */
 function requestSelection(options, dispatch, resetTranscript) {
     // What the user will be able to say
     const userOptions = [];
@@ -144,17 +159,22 @@ function requestSelection(options, dispatch, resetTranscript) {
     Handlers.setVoiceState(STATE_PENDING_SELECTION, dispatch);
 }
 
+/**
+ * Function for handling FIND command
+ * @param {JSON} data JSON passed through command
+ * @param {function} dispatch
+ */
 async function findCommand(data, dispatch) {
     // Required parameters to perform lookup
     if (!data.item) {
         Handlers.setMessage(`Data parameter is missing item!`, dispatch);
-        return false;
+        return;
     }
 
     const result = await API.getParts(data.item);
     if (!result || result.length < 1) {
         Handlers.setMessage(`Sorry, I wasn't able to find any instances of ${data.item}.`, dispatch);
-        return false;
+        return;
     }
 
     // Group the items by name
@@ -185,6 +205,12 @@ async function findCommand(data, dispatch) {
     Handlers.setMessage(message, dispatch);
 }
 
+/**
+ * Function for handling UPDATE command
+ * @param {JSON} data JSON passed through command
+ * @param {function} dispatch
+ * @param {function} resetTranscript
+ */
 async function updateCommand(data, dispatch, resetTranscript) {
     if (!data.item || !data.quantity) {
         Handlers.setMessage(`Missing data parameters!`, dispatch);

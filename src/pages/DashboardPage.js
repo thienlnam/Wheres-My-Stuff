@@ -1,6 +1,7 @@
 import React, {useState, useContext} from 'react';
 import {Card, Button} from 'antd';
 import _ from 'lodash';
+import {useQuery, useMutation, useQueryClient} from 'react-query';
 import {PlayCircleOutlined, CloseOutlined, PauseCircleOutlined} from '@ant-design/icons';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 import * as API from '../api';
@@ -10,7 +11,18 @@ import {Context} from '../state/Store';
 
 const DashboardPage = () => {
     const [state, dispatch] = useContext(Context);
-    console.log(state);
+    const {data} = useQuery('partContainers', API.getContainedBy);
+
+    let itemNames = [];
+    let containerNames = [];
+
+    // Generate grammer words from list of parts and containers
+    if (data) {
+        data.forEach((item, index) => {
+            itemNames.push(item.partName);
+            containerNames.push(item.containerName);
+        });
+    }
 
     const commands = [
         {
@@ -37,25 +49,30 @@ const DashboardPage = () => {
             command: VOICE.CANCEL_RESPONSES,
             callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
             isFuzzyMatch: true,
+            bestMatchOnly: true,
         },
         {
             command: VOICE.NO_RESPONSES,
             callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
             isFuzzyMatch: true,
+            bestMatchOnly: true,
         },
         {
             command: VOICE.YES_RESPONSES,
             callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
             isFuzzyMatch: true,
+            bestMatchOnly: true,
         },
         // Match selection choices
         {
             command: '*',
             callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
+            bestMatchOnly: true,
         },
     ];
 
     const {transcript, resetTranscript, listening} = useSpeechRecognition({commands});
+    SpeechRecognition.getRecognition().lang = 'en-US';
 
     const clearButtonClick = () => {
         resetTranscript();
@@ -99,6 +116,7 @@ const DashboardPage = () => {
                         <p style={{color: 'red'}}>
                             {state.voiceState === VOICE.STATE_PENDING_CONFIRMATION ? 'Awaiting your confirmation. Respond with YES or NO': ''}
                             {state.voiceState === VOICE.STATE_PENDING_SELECTION ? 'Awaiting your selection...': ''}
+                            <br />
                             {state.errorMessage}
                         </p>
                         {transcript}
