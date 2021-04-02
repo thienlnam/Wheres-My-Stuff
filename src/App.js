@@ -8,6 +8,7 @@ import CategoryPage from './pages/CategoryPage';
 import ContainedByPage from './pages/ContainedByPage';
 import Navbar from './components/Navbar';
 import * as Constants from './utility/constants';
+import Store from './state/Store';
 import {Layout} from 'antd';
 import {
     QueryClient,
@@ -38,20 +39,22 @@ function App() {
     }
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <Layout className="layout">
-                <Header>
-                    <Navbar currentPage={currentPage} changePage={setPage} />
-                </Header>
-                <Content style={{padding: '0 50px'}}>
-                    <div className="site-layout-content">
-                        {pageShown}
-                    </div>
-                </Content>
-                <Footer style={{textAlign: 'center'}}>Capstone CS Team 24 ©2020</Footer>
-            </Layout>
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
+        <Store>
+            <QueryClientProvider client={queryClient}>
+                <Layout className="layout">
+                    <Header>
+                        <Navbar currentPage={currentPage} changePage={setPage} />
+                    </Header>
+                    <Content style={{padding: '0 50px'}}>
+                        <div className="site-layout-content">
+                            {pageShown}
+                        </div>
+                    </Content>
+                    <Footer style={{textAlign: 'center'}}>Capstone CS Team 24 ©2020</Footer>
+                </Layout>
+                <ReactQueryDevtools initialIsOpen={false} />
+            </QueryClientProvider>
+        </Store>
     );
 }
 
