@@ -23,10 +23,12 @@ const PartListPage = () => {
             console.log(error);
         },
         onSuccess: (data, variables) => {
-            if (data.addCategory) {
-                API.createCategorizedBy(data.partID, data.addCategory);
-            } else if (data.removeCategory) {
-                API.removeCategorizedBy(data.partID, data.removeCategory);
+            if (data.addRemoveCategory) {
+                if (data.categories.indexOf(categories[data.addRemoveCategory]) == -1) {
+                    API.createCategorizedBy(data.partID, data.addRemoveCategory);
+                } else {
+                    API.removeCategorizedBy(data.partID, data.addRemoveCategory);
+                }
             }
             queryClient.setQueryData('parts', (old) => old.map((part) => part.partID === variables.partID ? data : part));
             queryClient.refetchQueries('parts');
@@ -47,8 +49,8 @@ const PartListPage = () => {
             console.log(error);
         },
         onSuccess: (partData, categoryData) => {
-            if (categoryData.addCategory) {
-                API.createCategorizedBy(partData.id, categoryData.addCategory);
+            if (categoryData.categoryID) {
+                API.createCategorizedBy(partData.id, categoryData.categoryID);
             }
             queryClient.refetchQueries('parts');
         },
@@ -89,8 +91,7 @@ const PartListPage = () => {
                 columns={[
                     {title: 'Name', field: 'name'},
                     {title: 'Category', field: 'categories'},
-                    {title: 'Add Category', field: 'addCategory', lookup: categories},
-                    {title: 'Remove Category', field: 'removeCategory', lookup: categories},
+                    {title: 'Add/Remove Category', field: 'addRemoveCategory', lookup: categories},   
                 ]}
                 data={data}
                 title={'Parts List'}
