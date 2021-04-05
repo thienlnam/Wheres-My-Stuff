@@ -1,12 +1,30 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {Card, Button} from 'antd';
 import _ from 'lodash';
+import {useQuery, useMutation, useQueryClient} from 'react-query';
 import {PlayCircleOutlined, CloseOutlined, PauseCircleOutlined} from '@ant-design/icons';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 import Modal from 'react-bootstrap/Modal';
 import * as API from '../api';
+import * as VOICE from '../voiceHandling';
+import * as Handlers from '../state/Handlers';
+import {Context} from '../state/Store';
 
 const DashboardPage = () => {
+    const [state, dispatch] = useContext(Context);
+    const {data} = useQuery('partContainers', API.getContainedBy);
+
+    const itemNames = [];
+    const containerNames = [];
+
+    // Generate grammer words from list of parts and containers
+    if (data) {
+        data.forEach((item, index) => {
+            itemNames.push(item.partName);
+            containerNames.push(item.containerName);
+        });
+    }
+
     const commands = [
         {
             command: 'Test',
@@ -14,82 +32,57 @@ const DashboardPage = () => {
         },
         {
             command: 'Where is (my) (the) *',
-            callback: (item) => handleVoiceCommand('find', item),
+            callback: (item) => VOICE.handleVoiceCommand(VOICE.FIND, {'item': item}, dispatch, resetTranscript),
         },
         {
             command: 'Where\'s (my) (the) *',
-            callback: (item) => handleVoiceCommand('find', item),
+            callback: (item) => VOICE.handleVoiceCommand(VOICE.FIND, {'item': item}, dispatch, resetTranscript),
         },
         {
-            command: 'What items are (inside) (in) (the) *',
-            callback: (container) => setMessage(`Inside the ${container} is a Screw A, and Screw B.`),
-        },
-        {
-            command: 'How many items are (there) in the *',
-            callback: (location) => setMessage(`There are 2 items in the ${location}`),
+            command: 'Update * quantity to :number',
+            callback: (item, number) => VOICE.handleVoiceCommand(VOICE.UPDATE, {'item': item, 'quantity': number}, dispatch, resetTranscript),
         },
         {
             command: 'clear',
             callback: () => clearButtonClick(),
         },
+        {
+            command: VOICE.CANCEL_RESPONSES,
+            callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
+            isFuzzyMatch: true,
+            bestMatchOnly: true,
+        },
+        {
+            command: VOICE.NO_RESPONSES,
+            callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
+            isFuzzyMatch: true,
+            bestMatchOnly: true,
+        },
+        {
+            command: VOICE.YES_RESPONSES,
+            callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
+            isFuzzyMatch: true,
+            bestMatchOnly: true,
+        },
+        // Match selection choices
+        {
+            command: '*',
+            callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),
+            bestMatchOnly: true,
+        },
     ];
 
-    const handleVoiceCommand = async (commandType, item) => {
-        if (commandType === 'find') {
-            const result = await API.getParts(item);
-            if (!result) {
-                setMessage(`Sorry, I wasn't able to find any instances of ${item}`);
-            } else {
-                // Group the items by name
-                let message = '';
-                const grouped = _.groupBy(result, 'partName');
-
-                // Count number of returned items (unique item names)
-                if (Object.keys(grouped).length > 1) {
-                    message += `I was able to find ${Object.keys(grouped).length} items that include ${item}.\n\n`;
-                }
-
-                // Loop through the grouped items and create message details
-                Object.entries(grouped).forEach((item) => {
-                    const itemName = item[0];
-                    const itemOccurances = item[1].length;
-                    message += `You have ${itemOccurances} location(s) where ${itemName} exists.\n`;
-
-                    item[1].forEach((detail) => {
-                        console.log('detail:', detail);
-                        const containerName = detail.containerName;
-                        const containerLocation = detail.location;
-                        message += `${detail.quantity} in the ${containerName} ${containerLocation ?
-                            ` located in the ${containerLocation}.` :
-                            '.'}\n`;
-                    });
-                    message += '\n';
-                });
-                setMessage(message);
-            }
-        } else {
-            setMessage(`Sorry, I cannot handle that request yet!`);
-        }
-    };
-
-    const {transcript, resetTranscript} = useSpeechRecognition({commands});
-    const [isListening, updateIsListening] = useState(false);
-    const [message, setMessage] = useState('');
-
-    const exportData = async () => {
-        return await API.exportData();
-    };
+    const {transcript, resetTranscript, listening} = useSpeechRecognition({commands});
+    SpeechRecognition.getRecognition().lang = 'en-US';
 
     const clearButtonClick = () => {
         resetTranscript();
-        setMessage('');
+        Handlers.setMessage('', dispatch);
     };
 
     const VoiceControlClick = () => {
-        updateIsListening(!isListening);
-
-        if (!isListening) {
-            SpeechRecognition.startListening({continuous: true});
+        if (!listening) {
+            SpeechRecognition.startListening({continuous: false});
         } else {
             SpeechRecognition.stopListening();
         }
@@ -104,6 +97,10 @@ const DashboardPage = () => {
 
     const handleCloseCommand = () => setShowCommand(false);
     const handleShowCommand = () => setShowCommand(true);
+
+    const exportData = async () => {
+        return await API.exportData();
+    };
 
     return (
         <div className="site-card-wrapper">
@@ -148,7 +145,7 @@ const DashboardPage = () => {
                     <ul>
                         <li>Update (Part) quantity to (Number)</li>
                     </ul>
-                    
+
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleCloseCommand}>
@@ -158,22 +155,43 @@ const DashboardPage = () => {
             </Modal>
 
             <Card title="Voice Control" bordered={false}>
-                <div style={{textAlign: 'center', verticalAlign: 'middle'}}>
-                    <Button
-                        onClick={VoiceControlClick}
-                        type={isListening ? 'danger' : 'primary'}
-                        icon={isListening ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
-                    >
-                        {isListening ? 'Stop' : 'Start'}
-                    </Button>
-                    <Button onClick={clearButtonClick} className={'buttonLeftMargin'} icon={<CloseOutlined />}>
-                        Clear
-                    </Button>
-                </div>
-                {transcript}
+                {SpeechRecognition.browserSupportsSpeechRecognition() ? (
+                    <>
+                        <div style={{textAlign: 'center', verticalAlign: 'middle'}}>
+                            <Button
+                                onClick={VoiceControlClick}
+                                type={listening ? 'danger' : 'primary'}
+                                icon={listening ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+                            >
+                                {listening ? 'Listening...' : 'Start'}
+                            </Button>
+                            <Button
+                                onClick={clearButtonClick}
+                                className={'buttonLeftMargin'}
+                                icon={<CloseOutlined />}
+                                disabled={state.voiceState !== VOICE.STATE_READY ? 'disabled' : ''}
+                            >
+                                Clear
+                            </Button>
+                        </div>
+                        <p style={{color: 'red'}}>
+                            {state.voiceState === VOICE.STATE_PENDING_CONFIRMATION ? 'Awaiting your confirmation. Respond with YES or NO': ''}
+                            {state.voiceState === VOICE.STATE_PENDING_SELECTION ? 'Awaiting your selection...': ''}
+                            <br />
+                            {state.errorMessage}
+                        </p>
+                        {transcript}
+                    </>
+                ) : (
+                    <>
+                        Unfortunately this browser does not support speech recognition.
+                        Under the hood this uses the Web Speech API which currently has limited browser support.
+                        Please try again with Chrome for the best experience.
+                    </>
+                )}
             </Card>
             <Card style={{whiteSpace: 'pre-wrap'}}>
-                {message}
+                {state.message}
             </Card>
             <br /><br />
             <Card title="Export Your Data to CSV" bordered={false}>

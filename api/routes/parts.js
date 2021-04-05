@@ -41,7 +41,7 @@ function getParts(req, callback) {
     let sql = '';
     const nameFilter = req.query.name;
     if (nameFilter) {
-        sql = mysql.format('SELECT Parts.name AS partName, Parts.partID, Containers.name as containerName, size, location, quantity FROM Parts, ContainedBy, Containers WHERE Parts.name LIKE CONCAT(\'%\', ?, \'%\') AND ContainedBy.partID = Parts.partID AND ContainedBy.containerID = Containers.containerID', [
+        sql = mysql.format('SELECT Parts.name AS partName, Parts.partID, Containers.name as containerName, Containers.containerID, size, location, quantity FROM Parts, ContainedBy, Containers WHERE Parts.name LIKE CONCAT(\'%\', ?, \'%\') AND ContainedBy.partID = Parts.partID AND ContainedBy.containerID = Containers.containerID', [
             nameFilter,
         ]);
     } else {
@@ -115,12 +115,23 @@ function getContainedBy(req, callback) {
 function updateContainedBy(req, callback) {
     const partID = req.params.pid;
     const containerID = req.params.cid;
-    const updateSQL = mysql.format('UPDATE ContainedBy SET identifier = ?, quantity = ? WHERE partID = ? AND containerID = ?', [
-        req.body.identifier,
-        req.body.quantity,
-        partID,
-        containerID,
-    ]);
+
+    // Quick hack to only update quantity
+    let updateSQL;
+    if (req.body.quantity && !req.body.identifier) {
+        updateSQL = mysql.format('UPDATE ContainedBy SET quantity = ? WHERE partID = ? AND containerID = ?', [
+            req.body.quantity,
+            partID,
+            containerID,
+        ]);
+    } else {
+        updateSQL = mysql.format('UPDATE ContainedBy SET identifier = ?, quantity = ? WHERE partID = ? AND containerID = ?', [
+            req.body.identifier,
+            req.body.quantity,
+            partID,
+            containerID,
+        ]);
+    }
     const selectSQL = mysql.format('SELECT * FROM ContainedBy WHERE partID = ? AND containerID = ?', [
         partID,
         containerID,
