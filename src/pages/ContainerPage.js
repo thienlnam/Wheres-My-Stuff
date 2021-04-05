@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Table from '../components/Table';
 import FormContainer from '../components/FormContainer';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
@@ -48,7 +48,7 @@ const ContainerPage = () => {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
-    
+
     return (
         <div>
             <Button onClick={handleShow}>

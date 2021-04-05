@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Table from '../components/Table';
 import {
     Form,
@@ -63,7 +63,7 @@ const PartListPage = () => {
     ];
 
     let categoryDataSelect = '';
-    let categories = {};
+    const categories = {};
     if (categoryData.data) {
         categoryDataSelect = categoryData.data.map((category) => {
             const categoryName = category.name;
@@ -103,16 +103,16 @@ const PartListPage = () => {
             </Modal>
 
             <FormContainer title='Add an item' onSubmit={createPartMutation.mutate} formInputs={formInputs}>
-            <Form.Item
-                label="Category"
-                name="categoryID"
-            >
-                <Select
-                    dropdownStyle={{ minWidth: '30%' }}
-                    placeholder="Category"
+                <Form.Item
+                    label="Category"
+                    name="categoryID"
                 >
-                    {categoryDataSelect}
-                </Select>
+                    <Select
+                        dropdownStyle={{minWidth: '30%'}}
+                        placeholder="Category"
+                    >
+                        {categoryDataSelect}
+                    </Select>
                 </Form.Item>
             </FormContainer>
             <br /><br />
@@ -120,7 +120,7 @@ const PartListPage = () => {
                 columns={[
                     {title: 'Name', field: 'name'},
                     {title: 'Category', field: 'categories'},
-                    {title: 'Add/Remove Category', field: 'addRemoveCategory', lookup: categories},   
+                    {title: 'Add/Remove Category', field: 'addRemoveCategory', lookup: categories},
                 ]}
                 data={data}
                 title={'Parts List'}

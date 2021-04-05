@@ -14,8 +14,8 @@ const DashboardPage = () => {
     const [state, dispatch] = useContext(Context);
     const {data} = useQuery('partContainers', API.getContainedBy);
 
-    let itemNames = [];
-    let containerNames = [];
+    const itemNames = [];
+    const containerNames = [];
 
     // Generate grammer words from list of parts and containers
     if (data) {
@@ -98,6 +98,10 @@ const DashboardPage = () => {
     const handleCloseCommand = () => setShowCommand(false);
     const handleShowCommand = () => setShowCommand(true);
 
+    const exportData = async () => {
+        return await API.exportData();
+    };
+
     return (
         <div className="site-card-wrapper">
             <Button onClick={handleShow}>
@@ -141,7 +145,7 @@ const DashboardPage = () => {
                     <ul>
                         <li>Update (Part) quantity to (Number)</li>
                     </ul>
-                    
+
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={handleCloseCommand}>
