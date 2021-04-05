@@ -21,7 +21,7 @@ const connection = mysql.createConnection({
 function createCategorized(req, callback) {
     const partID = req.params.pid;
     const categoryID = req.params.cid;
-    const sql = mysql.format('INSERT INTO wmsinventory.CategorizedBY (partID, categoryID) VALUES (?, ?)', [
+    const sql = mysql.format('INSERT INTO CategorizedBy (partID, categoryID) VALUES (?, ?)', [
         partID,
         categoryID,
     ]);
@@ -43,12 +43,12 @@ function createCategorized(req, callback) {
 function deleteCategorized(req, callback) {
     const partID = req.params.pid;
     const categoryID = req.params.cid;
-    const deleteSQL = mysql.format('DELETE FROM wmsinventory.CategorizedBy WHERE partID = ? AND categoryID = ?', [
+    const deleteSQL = mysql.format('DELETE FROM CategorizedBy WHERE partID = ? AND categoryID = ?', [
         partID,
         categoryID,
     ]);
 
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.CategorizedBy WHERE partID = ? AND categoryID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM CategorizedBy WHERE partID = ? AND categoryID = ?', [
         partID,
         categoryID,
     ]);

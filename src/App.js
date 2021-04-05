@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import CategoryPage from './pages/CategoryPage';
 import ContainedByPage from './pages/ContainedByPage';
+import FAQPage from './pages/FAQPage';
 import Navbar from './components/Navbar';
 import * as Constants from './utility/constants';
 import Store from './state/Store';
@@ -36,6 +37,8 @@ function App() {
         pageShown = <CategoryPage />;
     } else if (currentPage === Constants.HEADER_DASHBOARD) {
         pageShown = <DashboardPage />;
+    } else if (currentPage === Constants.HEADER_FAQ) {
+        pageShown = <FAQPage />;
     }
 
     return (

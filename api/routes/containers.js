@@ -19,7 +19,7 @@ const connection = mysql.createConnection({
  * @param {*} callback
  */
 function createContainer(req, callback) {
-    const createSQL = mysql.format('INSERT INTO wmsinventory.Containers (name, size, location, description) VALUES (?, ?, ?, ?)', [
+    const createSQL = mysql.format('INSERT INTO Containers (name, size, location, description) VALUES (?, ?, ?, ?)', [
         req.body.name,
         req.body.size,
         req.body.location,
@@ -48,7 +48,7 @@ function getContainers(req, callback) {
             nameFilter,
         ]);
     } else {
-        selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers');
+        selectSQL = mysql.format('SELECT * FROM Containers');
     }
     connection.query(selectSQL, function(err, result) {
         if (err) {
@@ -66,7 +66,7 @@ function getContainers(req, callback) {
  * @param {*} callback
  */
 function getContainer(req, callback) {
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Containers WHERE containerID = ?', [
         req.params.cid,
     ]);
     connection.query(selectSQL, function(err, result) {
@@ -87,14 +87,14 @@ function getContainer(req, callback) {
 // Bug when updating name and printing updated object
 function updateContainer(req, callback) {
     const containerID = req.params.cid;
-    const updateSQL = mysql.format('UPDATE wmsinventory.Containers SET name = ?, description = ?, location = ?, size = ? WHERE containerID = ?', [
+    const updateSQL = mysql.format('UPDATE Containers SET name = ?, description = ?, location = ?, size = ? WHERE containerID = ?', [
         req.body.name,
         req.body.description,
         req.body.location,
         req.body.size,
         containerID,
     ]);
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Containers WHERE containerID = ?', [
         containerID,
     ]);
 
@@ -126,10 +126,10 @@ function updateContainer(req, callback) {
  */
 function deleteContainer(req, callback) {
     const containerID = req.params.cid;
-    const deleteSQL = mysql.format('DELETE FROM wmsinventory.Containers WHERE containerID = ?', [
+    const deleteSQL = mysql.format('DELETE FROM Containers WHERE containerID = ?', [
         containerID,
     ]);
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Containers WHERE containerID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Containers WHERE containerID = ?', [
         containerID,
     ]);
     // Check if container actually exists with a SELECT before updating

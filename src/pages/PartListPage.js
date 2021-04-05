@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Table from '../components/Table';
 import {
     Form,
     Select,
+    Button,
 } from 'antd';
 import FormContainer from '../components/FormContainer';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
 import * as API from '../api';
+import Modal from 'react-bootstrap/Modal';
 
 const PartListPage = () => {
     const queryClient = useQueryClient();
@@ -23,10 +25,12 @@ const PartListPage = () => {
             console.log(error);
         },
         onSuccess: (data, variables) => {
-            if (data.addCategory) {
-                API.createCategorizedBy(data.partID, data.addCategory);
-            } else if (data.removeCategory) {
-                API.removeCategorizedBy(data.partID, data.removeCategory);
+            if (data.addRemoveCategory) {
+                if (data.categories.indexOf(categories[data.addRemoveCategory]) == -1) {
+                    API.createCategorizedBy(data.partID, data.addRemoveCategory);
+                } else {
+                    API.removeCategorizedBy(data.partID, data.addRemoveCategory);
+                }
             }
             queryClient.setQueryData('parts', (old) => old.map((part) => part.partID === variables.partID ? data : part));
             queryClient.refetchQueries('parts');
@@ -47,8 +51,8 @@ const PartListPage = () => {
             console.log(error);
         },
         onSuccess: (partData, categoryData) => {
-            if (categoryData.addCategory) {
-                API.createCategorizedBy(partData.id, categoryData.addCategory);
+            if (categoryData.categoryID) {
+                API.createCategorizedBy(partData.id, categoryData.categoryID);
             }
             queryClient.refetchQueries('parts');
         },
@@ -69,8 +73,35 @@ const PartListPage = () => {
         });
     }
 
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
     return (
         <div>
+            <Button onClick={handleShow}>
+                ?
+            </Button>
+
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Parts Help</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p><b>This page is for adding/editing/removing parts from the inventory</b></p>
+                    <p>Parts are the components and individual parts in the inventory</p><br />
+                    <p>Add an item by specifying a name and optionally a category it belongs to</p><br />
+                    <p>Editing an item will allow the changing of the name or adding/removing categories to the item</p><br />
+                    <p>Deleting an item will remove it from the inventory and will reflect on the Part Locations page</p><br />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="primary" onClick={handleClose}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
             <FormContainer title='Add an item' onSubmit={createPartMutation.mutate} formInputs={formInputs}>
             <Form.Item
                 label="Category"
@@ -89,8 +120,7 @@ const PartListPage = () => {
                 columns={[
                     {title: 'Name', field: 'name'},
                     {title: 'Category', field: 'categories'},
-                    {title: 'Add Category', field: 'addCategory', lookup: categories},
-                    {title: 'Remove Category', field: 'removeCategory', lookup: categories},
+                    {title: 'Add/Remove Category', field: 'addRemoveCategory', lookup: categories},   
                 ]}
                 data={data}
                 title={'Parts List'}
