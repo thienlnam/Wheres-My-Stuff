@@ -20,7 +20,7 @@ const connection = mysql.createConnection({
  */
 function createUser(req, callback) {
     // TODO: Either encrypt password OR use a different oauth provider
-    const sql = mysql.format('INSERT INTO wmsinventory.Users (username, password) VALUES (?, ?)', [
+    const sql = mysql.format('INSERT INTO Users (username, password) VALUES (?, ?)', [
         req.body.username,
         req.body.password,
     ]);
@@ -42,12 +42,12 @@ function createUser(req, callback) {
 function getUsers(req, callback) {
     let sql;
     if (Object.keys(req.query).length != 0) {
-        sql = mysql.format('SELECT * FROM wmsinventory.Users WHERE ? = ?', [req.query.filter, req.query.name]);
+        sql = mysql.format('SELECT * FROM Users WHERE ? = ?', [req.query.filter, req.query.name]);
         for (let i = 0; i < 2; i++) {
             sql = sql.replace(/["']/, '');
         }
     } else {
-        sql = mysql.format('SELECT * FROM wmsinventory.Users');
+        sql = mysql.format('SELECT * FROM Users');
     }
     connection.query(sql, function(err, result) {
         if (err) {
@@ -65,7 +65,7 @@ function getUsers(req, callback) {
  * @param {*} callback
  */
 function getUser(req, callback) {
-    const sql = mysql.format('SELECT * FROM wmsinventory.Users WHERE userID = ?', [
+    const sql = mysql.format('SELECT * FROM Users WHERE userID = ?', [
         req.params.uid,
     ]);
     console.log(sql);
@@ -86,12 +86,12 @@ function getUser(req, callback) {
  */
 function updateUser(req, callback) {
     const userID = req.params.uid;
-    let updateSQL = mysql.format('UPDATE wmsinventory.Users SET ? = ? WHERE userID = ?', [
+    let updateSQL = mysql.format('UPDATE Users SET ? = ? WHERE userID = ?', [
         req.body.column,
         req.body.value,
         userID,
     ]);
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Users WHERE userID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Users WHERE userID = ?', [
         userID,
     ]);
     for (let i = 0; i < 2; i++) {
@@ -131,7 +131,7 @@ function deleteUser(req, callback) {
         userID,
     ]);
 
-    const selectSQL = mysql.format('SELECT * FROM wmsinventory.Users WHERE userID = ?', [
+    const selectSQL = mysql.format('SELECT * FROM Users WHERE userID = ?', [
         userID,
     ]);
 

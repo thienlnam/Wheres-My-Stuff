@@ -25,10 +25,12 @@ const PartListPage = () => {
             console.log(error);
         },
         onSuccess: (data, variables) => {
-            if (data.addCategory) {
-                API.createCategorizedBy(data.partID, data.addCategory);
-            } else if (data.removeCategory) {
-                API.removeCategorizedBy(data.partID, data.removeCategory);
+            if (data.addRemoveCategory) {
+                if (data.categories.indexOf(categories[data.addRemoveCategory]) == -1) {
+                    API.createCategorizedBy(data.partID, data.addRemoveCategory);
+                } else {
+                    API.removeCategorizedBy(data.partID, data.addRemoveCategory);
+                }
             }
             queryClient.setQueryData('parts', (old) => old.map((part) => part.partID === variables.partID ? data : part));
             queryClient.refetchQueries('parts');
@@ -49,8 +51,8 @@ const PartListPage = () => {
             console.log(error);
         },
         onSuccess: (partData, categoryData) => {
-            if (categoryData.addCategory) {
-                API.createCategorizedBy(partData.id, categoryData.addCategory);
+            if (categoryData.categoryID) {
+                API.createCategorizedBy(partData.id, categoryData.categoryID);
             }
             queryClient.refetchQueries('parts');
         },
@@ -61,7 +63,7 @@ const PartListPage = () => {
     ];
 
     let categoryDataSelect = '';
-    let categories = {};
+    const categories = {};
     if (categoryData.data) {
         categoryDataSelect = categoryData.data.map((category) => {
             const categoryName = category.name;
@@ -76,16 +78,16 @@ const PartListPage = () => {
             <Modals title={Constants.PARTS_HELP_TITLE} body={Constants.PARTS_HELP_BODY} button='?'/>
 
             <FormContainer title='Add an item' onSubmit={createPartMutation.mutate} formInputs={formInputs}>
-            <Form.Item
-                label="Category"
-                name="categoryID"
-            >
-                <Select
-                    dropdownStyle={{ minWidth: '30%' }}
-                    placeholder="Category"
+                <Form.Item
+                    label="Category"
+                    name="categoryID"
                 >
-                    {categoryDataSelect}
-                </Select>
+                    <Select
+                        dropdownStyle={{minWidth: '30%'}}
+                        placeholder="Category"
+                    >
+                        {categoryDataSelect}
+                    </Select>
                 </Form.Item>
             </FormContainer>
             <br /><br />
@@ -93,8 +95,7 @@ const PartListPage = () => {
                 columns={[
                     {title: 'Name', field: 'name'},
                     {title: 'Category', field: 'categories'},
-                    {title: 'Add Category', field: 'addCategory', lookup: categories},
-                    {title: 'Remove Category', field: 'removeCategory', lookup: categories},
+                    {title: 'Add/Remove Category', field: 'addRemoveCategory', lookup: categories},
                 ]}
                 data={data}
                 title={'Parts List'}
