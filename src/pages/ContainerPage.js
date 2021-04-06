@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Table from '../components/Table';
 import FormContainer from '../components/FormContainer';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
-import {Button} from 'antd';
-import Modal from 'react-bootstrap/Modal';
 import * as API from '../api';
+import * as Constants from '../utility/constants';
+import Modals from '../components/Modals';
 
 const ContainerPage = () => {
     const {data} = useQuery('containers', API.getContainers);
@@ -44,34 +44,9 @@ const ContainerPage = () => {
         {label: 'Size', name: 'size', type: 'number', required: false},
     ];
 
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-    
     return (
         <div>
-            <Button onClick={handleShow}>
-                ?
-            </Button>
-
-            <Modal show={show} onHide={handleClose} animation={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Containers Help</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p><b>This page is for adding/editing/removing containers to the inventory</b></p>
-                    <p>Containers hold the parts that are stored in the inventory</p><br />
-                    <p>Adding a container requires a name and a location, and can optionally take a description and size</p><br />
-                    <p>Editing a container allows changing any of the attributes shown</p><br />
-                    <p>Removing a container will ask for confirmation before removing it from the inventory</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <Modals title={Constants.CONTAINER_HELP_TITLE} body={Constants.CONTAINER_HELP_BODY} button='?'/>
 
             <FormContainer title='Add a container' onSubmit={createContainerMutation.mutate} formInputs={formInputs} />
             <br /><br />

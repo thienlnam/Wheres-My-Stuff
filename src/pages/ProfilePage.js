@@ -1,9 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import axios from 'axios';
 import Table from '../components/Table';
 import {useQuery} from 'react-query';
-import {Button} from 'antd';
-import Modal from 'react-bootstrap/Modal';
+import * as Constants from '../utility/constants';
+import Modals from '../components/Modals';
 
 const url = process.env.REACT_APP_HOST;
 
@@ -18,33 +18,9 @@ const getProfiles = async () => {
 const ProfilesPage = () => {
     const {data} = useQuery('profiles', getProfiles);
 
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
     return (
         <div>
-            <Button onClick={handleShow}>
-                ?
-            </Button>
-
-            <Modal show={show} onHide={handleClose} animation={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Profiles Help</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p><b>This page is for viewing profiles</b></p>
-                    <p>***Features not implemented***</p>
-                    <p>Modifying aspects of users and permissions</p>
-                    <p>Restrict access to the system to allowed users</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <Modals title={Constants.PROFILE_HELP_TITLE} body={Constants.PROFILE_HELP_BODY} button='?'/>
 
             <Table
                 columns={[
