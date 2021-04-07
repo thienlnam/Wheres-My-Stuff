@@ -16,7 +16,7 @@ const CategoryPage = () => {
         },
         onSuccess: () => {
             queryClient.refetchQueries('categories');
-        }
+        },
     });
 
     const updateCategoryMutation = useMutation(API.updateCategory, {
@@ -38,7 +38,7 @@ const CategoryPage = () => {
     });
 
     const formInputs = [
-        { label: 'Name', name: 'name', required: true, errorMessage: 'Please enter an item name!' },
+        {label: 'Name', name: 'name', required: true, errorMessage: 'Please enter an item name!'},
     ];
 
     return (
@@ -53,7 +53,7 @@ const CategoryPage = () => {
                 ]}
                 data={data}
                 title={'Categories List'}
-                localization={{ body: { editRow: { deleteText: 'Are you sure you want to delete this category?' } } }}
+                localization={{body: {editRow: {deleteText: 'Are you sure you want to delete this category?'}}}}
                 editable={{
                     isEditable: () => true,
                     isDeletable: () => true,
