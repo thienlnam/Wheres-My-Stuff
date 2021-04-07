@@ -1,11 +1,16 @@
 import React, {useState} from 'react';
 import {Button, Modal} from 'antd';
+import DOMPurify from 'dompurify';
 
 const Modals = (props) => {
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    function cleanHtml() {
+       return DOMPurify.sanitize(props.body);
+    }
 
     return (
         <>
@@ -21,7 +26,7 @@ const Modals = (props) => {
                         Close
                     </Button>
                 }>
-                <div dangerouslySetInnerHTML={{ __html: props.body }} />
+                <div dangerouslySetInnerHTML={{ __html: cleanHtml() }} />
                 </Modal>
             </>
     );
