@@ -1,14 +1,16 @@
-import React, {useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import {Card, Button} from 'antd';
 import _ from 'lodash';
-import {useQuery, useMutation, useQueryClient} from 'react-query';
+import {useQuery} from 'react-query';
 import {PlayCircleOutlined, CloseOutlined, PauseCircleOutlined} from '@ant-design/icons';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
-import Modal from 'react-bootstrap/Modal';
 import * as API from '../api';
+import * as Constants from './../utility/constants';
+import Modals from '../components/Modals';
 import * as VOICE from '../voiceHandling';
 import * as Handlers from '../state/Handlers';
 import {Context} from '../state/Store';
+
 
 const DashboardPage = () => {
     const [state, dispatch] = useContext(Context);
@@ -88,71 +90,15 @@ const DashboardPage = () => {
         }
     };
 
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const [showCommand, setShowCommand] = useState(false);
-
-    const handleCloseCommand = () => setShowCommand(false);
-    const handleShowCommand = () => setShowCommand(true);
-
     const exportData = async () => {
         return await API.exportData();
     };
 
     return (
         <div className="site-card-wrapper">
-            <Button onClick={handleShow}>
-                ?
-            </Button>
-            <Button onClick={handleShowCommand}>
-                Commands
-            </Button>
+            <Modals title={Constants.DASH_HELP_TITLE} body={Constants.DASH_HELP_BODY} button='?' />
 
-            <Modal show={show} onHide={handleClose} animation={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Voice Commands Help</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p><b>This page is for using voice commands and exporting/importing inventory information</b></p><br />
-                    <p>To start the voice command, click the start button and speech your command</p><br />
-                    <p>To clear the transcript, click the reset button</p><br />
-                    <p>The export button will save a .csv file with the information of the inventory. This can be used as a backup file</p><br />
-                    <p>The import button will prompt for a .csv file and attempt to import the data into the inventory</p><br />
-                    <p>*Note: If voice is not be detected, allow the site to use your microphone by clicking the icon to the left of the URL and allowing microphone use</p><br />
-                    <p><b>Tip:</b> When naming multiple similar objects use letters instead of numbers i.e. (Screw A, Screw B, Screw H)</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-            <Modal show={showCommand} onHide={handleCloseCommand} animation={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Voice Commands Help</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p><b>These are the supported voice commands</b></p><br />
-                    <p><b>Find:</b> Find a Part with the below commands:</p>
-                    <ul>
-                        <li>Where's my/the (Part)?</li>
-                        <li>Where is my/the (Part)?</li>
-                    </ul>
-                    <p><b>Update:</b> Update a Part with the below commands:</p>
-                    <ul>
-                        <li>Update (Part) quantity to (Number)</li>
-                    </ul>
-
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleCloseCommand}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <Modals title={Constants.DASH_COMMANDS_TITLE} body={Constants.DASH_COMMANDS_BODY} button='Commands'/>
 
             <Card title="Voice Control" bordered={false}>
                 {SpeechRecognition.browserSupportsSpeechRecognition() ? (

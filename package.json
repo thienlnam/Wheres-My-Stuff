@@ -11,6 +11,7 @@
     "antd": "^4.7.3",
     "axios": "^0.21.1",
     "babel-eslint": "^10.1.0",
+    "dompurify": "^2.2.7",
     "dotenv": "^8.2.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-import": "^2.22.1",
@@ -21,8 +22,7 @@
     "react-dom": "^16.14.0",
     "react-query": "^3.5.12",
     "react-scripts": "3.4.4",
-    "react-speech-recognition": "^3.2.3",
-    "react-bootstrap": "1.5.2"
+    "react-speech-recognition": "^3.2.3"
   },
   "scripts": {
     "start": "react-scripts start",

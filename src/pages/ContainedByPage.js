@@ -1,14 +1,14 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Table from '../components/Table';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
 import * as API from '../api';
 import {
     Form,
     Select,
-    Button,
 } from 'antd';
-import Modal from 'react-bootstrap/Modal';
 import FormContainer from '../components/FormContainer';
+import Modals from '../components/Modals';
+import * as Constants from '../utility/constants';
 
 const ContainedByPage = () => {
     const queryClient = useQueryClient();
@@ -69,34 +69,9 @@ const ContainedByPage = () => {
         });
     }
 
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
     return (
         <div>
-            <Button onClick={handleShow}>
-                ?
-            </Button>
-
-            <Modal show={show} onHide={handleClose} animation={false}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Part Locations Help</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p><b>This page is for adding/editing/removing parts to containers in the inventory</b></p><br />
-                    <p>The part locations show the container a part is in and the quantity</p><br />
-                    <p>Adding a part to a container requires choosing a part and a container as well as a quantity, optionally add an identifier</p><br />
-                    <p>Editing a location allows editing of the identifer and quantity</p><br />
-                    <p>Removing a location does not remove the part and container, only the relationship between them is removed</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="primary" onClick={handleClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <Modals title={Constants.CONTAINED_HELP_TITLE} body={Constants.CONTAINED_HELP_BODY} button='?'/>
 
             <FormContainer title="Add Part To Container" onSubmit={createContainedByMutation.mutate} formInputs={formInputs}>
                 <Form.Item
