@@ -1,7 +1,7 @@
-import React, {useState, useContext} from 'react';
+import React, {useContext} from 'react';
 import {Card, Button} from 'antd';
 import _ from 'lodash';
-import {useQuery, useMutation, useQueryClient} from 'react-query';
+import {useQuery} from 'react-query';
 import {PlayCircleOutlined, CloseOutlined, PauseCircleOutlined} from '@ant-design/icons';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 import * as API from '../api';
