@@ -75,7 +75,6 @@ const DashboardPage = () => {
     ];
 
     const {transcript, resetTranscript, listening} = useSpeechRecognition({commands});
-    SpeechRecognition.getRecognition().lang = 'en-US';
 
     const clearButtonClick = () => {
         resetTranscript();
@@ -84,7 +83,10 @@ const DashboardPage = () => {
 
     const VoiceControlClick = () => {
         if (!listening) {
-            SpeechRecognition.startListening({continuous: false});
+            SpeechRecognition.startListening({
+                continuous: false,
+                language: 'en-US',
+            });
         } else {
             SpeechRecognition.stopListening();
         }
