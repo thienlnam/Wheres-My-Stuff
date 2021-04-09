@@ -9,7 +9,7 @@ const Modals = (props) => {
     const handleShow = () => setShow(true);
 
     function cleanHtml() {
-       return DOMPurify.sanitize(props.body);
+        return DOMPurify.sanitize(props.body);
     }
 
     return (
@@ -26,10 +26,10 @@ const Modals = (props) => {
                         Close
                     </Button>
                 }>
-                <div dangerouslySetInnerHTML={{ __html: cleanHtml() }} />
-                </Modal>
-            </>
+                <div dangerouslySetInnerHTML={{__html: cleanHtml()}} />
+            </Modal>
+        </>
     );
-}
+};
 
 export default Modals;

@@ -2,7 +2,7 @@ import React from 'react';
 import Table from '../components/Table';
 import {useQuery, useMutation, useQueryClient} from 'react-query';
 import FormContainer from '../components/FormContainer';
-import * as API from '../api'
+import * as API from '../api';
 import Modals from '../components/Modals';
 import * as Constants from '../utility/constants';
 

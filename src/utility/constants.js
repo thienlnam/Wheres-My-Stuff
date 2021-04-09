@@ -11,7 +11,7 @@ export const DASH_HELP_BODY =
     '<p><b>This page is for using voice commands and exporting/importing inventory information</b></p><br />' +
     '<p>To start the voice command, click the start button and speech your command</p><br />' +
     '<p>To clear the transcript, click the reset button</p><br />' +
-    '<p>The export button will save a .csv file with the information of the inventory. This can be used as a backup file</p><br />' + 
+    '<p>The export button will save a .csv file with the information of the inventory. This can be used as a backup file</p><br />' +
     '<p>The import button will prompt for a .csv file and attempt to import the data into the inventory</p><br />' +
     '<p>*Note: If voice is not be detected, allow the site to use your microphone by clicking the icon to the left of the URL and allowing microphone use</p><br />' +
     '<p><b>Tip:</b> When naming multiple similar objects use letters instead of numbers i.e. (Screw A, Screw B, Screw H)</p>';

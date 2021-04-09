@@ -40,7 +40,7 @@ export async function handleVoiceCommand(commandType, data, dispatch, resetTrans
  * @param {*} dispatch
  * @param {*} resetTranscript
  */
-export async function handleVoiceResponses (response, state, dispatch, resetTranscript) {
+export async function handleVoiceResponses(response, state, dispatch, resetTranscript) {
     Handlers.setErrorMessage('', dispatch);
     if (state.voiceState === STATE_READY) {
         return;
