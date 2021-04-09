@@ -73,7 +73,10 @@ const DashboardPage = () => {
 
     const VoiceControlClick = () => {
         if (!listening) {
-            SpeechRecognition.startListening({continuous: false});
+            SpeechRecognition.startListening({
+                continuous: false,
+                language: 'en-US',
+            });
         } else {
             SpeechRecognition.stopListening();
         }
