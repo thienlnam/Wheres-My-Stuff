@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import {Card, Button} from 'antd';
 import _ from 'lodash';
-import {useQuery} from 'react-query';
 import {PlayCircleOutlined, CloseOutlined, PauseCircleOutlined} from '@ant-design/icons';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 import * as API from '../api';
@@ -10,22 +9,11 @@ import Modals from '../components/Modals';
 import * as VOICE from '../voiceHandling';
 import * as Handlers from '../state/Handlers';
 import {Context} from '../state/Store';
+import VoiceControlButton from '../components/VoiceControlButton';
 
 
 const DashboardPage = () => {
     const [state, dispatch] = useContext(Context);
-    const {data} = useQuery('partContainers', API.getContainedBy);
-
-    const itemNames = [];
-    const containerNames = [];
-
-    // Generate grammer words from list of parts and containers
-    if (data) {
-        data.forEach((item, index) => {
-            itemNames.push(item.partName);
-            containerNames.push(item.containerName);
-        });
-    }
 
     const commands = [
         {
@@ -76,6 +64,8 @@ const DashboardPage = () => {
 
     const {transcript, resetTranscript, listening} = useSpeechRecognition({commands});
 
+    const voiceButtonData = VOICE.generateVoiceButtons(state);
+
     const clearButtonClick = () => {
         resetTranscript();
         Handlers.setMessage('', dispatch);
@@ -99,9 +89,7 @@ const DashboardPage = () => {
     return (
         <div className="site-card-wrapper">
             <Modals title={Constants.DASH_HELP_TITLE} body={Constants.DASH_HELP_BODY} button='?' />
-
             <Modals title={Constants.DASH_COMMANDS_TITLE} body={Constants.DASH_COMMANDS_BODY} button='Commands'/>
-
             <Card title="Voice Control" bordered={false}>
                 {SpeechRecognition.browserSupportsSpeechRecognition() ? (
                     <>
@@ -141,6 +129,23 @@ const DashboardPage = () => {
             <Card style={{whiteSpace: 'pre-wrap'}}>
                 {state.message}
             </Card>
+            {
+                voiceButtonData.length > 1 && (
+                    <Card>
+                        {
+                            voiceButtonData.map((value) => {
+                                return (
+                                    <VoiceControlButton
+                                        key={value.buttonText}
+                                        text={value.buttonText}
+                                        onClick={() => VOICE.handleVoiceResponses(`${value.data}`, state, dispatch, resetTranscript)}
+                                    />
+                                );
+                            })
+                        }
+                    </Card>
+                )
+            }
             <br /><br />
             <Card title="Export Your Data to CSV" bordered={false}>
                 <div style={{textAlign: 'center', verticalAlign: 'middle'}}>
