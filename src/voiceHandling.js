@@ -22,7 +22,7 @@ export const CANCEL_RESPONSES = ['cancel'];
  * @param {*} dispatch
  * @param {*} resetTranscript
  */
-export const handleVoiceCommand = async (commandType, data, dispatch, resetTranscript) => {
+export async function handleVoiceCommand(commandType, data, dispatch, resetTranscript) {
     Handlers.setMessage(`Looking through my brain...`, dispatch);
     if (commandType === FIND) {
         findCommand(data, dispatch);
@@ -40,10 +40,9 @@ export const handleVoiceCommand = async (commandType, data, dispatch, resetTrans
  * @param {*} dispatch
  * @param {*} resetTranscript
  */
-export const handleVoiceResponses = async (response, state, dispatch, resetTranscript) => {
+export async function handleVoiceResponses (response, state, dispatch, resetTranscript) {
     Handlers.setErrorMessage('', dispatch);
     if (state.voiceState === STATE_READY) {
-        Handlers.setMessage(`Sorry, I cannot handle that request yet!`, dispatch);
         return;
     } else if (state.voiceState === STATE_PENDING_SELECTION) {
         if (CANCEL_RESPONSES.includes(response)) {
@@ -236,3 +235,27 @@ async function updateCommand(data, dispatch, resetTranscript) {
 
     return true;
 };
+
+/**
+ * Function to generate data for voice buttons
+ * @param {array} state Global state of voice function
+ * @return {array} Array of data for generated buttons, text and data
+ */
+export function generateVoiceButtons(state) {
+    const voiceButtonData = [];
+    if (state.voiceState === STATE_PENDING_CONFIRMATION) {
+        voiceButtonData.push({'buttonText': 'Yes', 'data': 'yes'});
+        voiceButtonData.push({'buttonText': 'No', 'data': 'no'});
+    }
+
+    // Present the multiple options
+    if (state.voiceState === STATE_PENDING_SELECTION && state.options.length > 0) {
+        state.options.map((data, index) => {
+            console.log(data);
+            voiceButtonData.push({'buttonText': data.partName + ' inside the ' + data.containerName, 'data': index});
+        });
+    }
+
+    return voiceButtonData;
+}
+
