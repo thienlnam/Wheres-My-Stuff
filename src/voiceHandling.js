@@ -232,11 +232,10 @@ async function findContents(data, dispatch) {
     }
 
     // Loop through the grouped items and create message details
-    Object.entries(grouped).forEach((item) => {
-        console.log(item);
+    Object.entries(grouped).forEach((item, index) => {
         const itemName = item[0];
         const itemOccurances = item[1].length;
-        message += `You have ${itemOccurances} item(s) inside the ${itemName}\n`;
+        message += `You have ${itemOccurances} item(s) inside the ${itemName} located in the ${result[index].location}\n`;
 
         item[1].forEach((detail) => {
             const partName = detail.partName;
