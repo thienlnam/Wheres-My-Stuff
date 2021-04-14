@@ -4,6 +4,7 @@ import * as Handlers from './state/Handlers';
 // Command Types
 export const FIND = 'FIND';
 export const UPDATE = 'UPDATE';
+export const CONTENTS = 'CONTENTS';
 
 // Voice Component States
 export const STATE_READY = 'READY';
@@ -24,10 +25,13 @@ export const CANCEL_RESPONSES = ['cancel'];
  */
 export async function handleVoiceCommand(commandType, data, dispatch, resetTranscript) {
     Handlers.setMessage(`Looking through my brain...`, dispatch);
+    Handlers.setErrorMessage('', dispatch);
     if (commandType === FIND) {
         findCommand(data, dispatch);
     } else if (commandType === UPDATE) {
         updateCommand(data, dispatch, resetTranscript);
+    } else if (commandType === CONTENTS) {
+        findContents(data, dispatch);
     } else {
         Handlers.setMessage(`Sorry, I cannot handle that request yet!`, dispatch);
     }
@@ -166,13 +170,13 @@ function requestSelection(options, dispatch, resetTranscript) {
 async function findCommand(data, dispatch) {
     // Required parameters to perform lookup
     if (!data.item) {
-        Handlers.setMessage(`Data parameter is missing item!`, dispatch);
+        Handlers.setErrorMessage(`Data parameter is missing item!`, dispatch);
         return;
     }
 
     const result = await API.getParts(data.item);
     if (!result || result.length < 1) {
-        Handlers.setMessage(`Sorry, I wasn't able to find any instances of ${data.item}.`, dispatch);
+        Handlers.setErrorMessage(`Sorry, I wasn't able to find any instances of ${data.item}.`, dispatch);
         return;
     }
 
@@ -198,6 +202,46 @@ async function findCommand(data, dispatch) {
             message += `${detail.quantity} in the ${containerName}${containerLocation ?
                 ` located in the ${containerLocation}.` :
                 '.'}\n`;
+        });
+        message += '\n';
+    });
+    Handlers.setMessage(message, dispatch);
+}
+
+async function findContents(data, dispatch) {
+    if (!data.container) {
+        Handlers.setErrorMessage(`Data parameter is missing item!`, dispatch);
+        return;
+    }
+
+    const result = await API.getContainers(data.container);
+    if (!result || result.length < 1) {
+        Handlers.setErrorMessage(`Sorry, I wasn't able to find any instances of ${data.container}.`, dispatch);
+        return;
+    }
+
+    const containedResults = await API.getContainedBy(data.container);
+
+    // Group the items by name
+    let message = '';
+    const grouped = _.groupBy(containedResults, 'containerName');
+
+    // Count number of returned items (unique item names)
+    if (Object.keys(grouped).length > 1) {
+        message += `I was able to find ${Object.keys(grouped).length} containers that include the name ${data.container}.\n\n`;
+    }
+
+    // Loop through the grouped items and create message details
+    Object.entries(grouped).forEach((item) => {
+        console.log(item);
+        const itemName = item[0];
+        const itemOccurances = item[1].length;
+        message += `You have ${itemOccurances} item(s) inside the ${itemName}\n`;
+
+        item[1].forEach((detail) => {
+            const partName = detail.partName;
+            const partQuantity = detail.quantity;
+            message += `${partName} - Quantity: ${partQuantity}\n`;
         });
         message += '\n';
     });

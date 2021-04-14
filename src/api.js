@@ -34,10 +34,13 @@ export const createPart = async (partData) => {
 /** ----- PART API CALLS END ----- */
 
 /** ----- CONTAINER API CALLS ----- */
-export const getContainers = async () => {
+export const getContainers = async (name = '') => {
     const {data} = await axios.request({
         method: 'GET',
         url: `${url}/Containers`,
+        params: {
+            name: name,
+        },
     });
     return data;
 };
@@ -59,10 +62,13 @@ export const createContainer = async (containerData) => {
 /** ----- CONTAINER API CALLS END ----- */
 
 /** ----- CONTAINED BY API CALLS ----- */
-export const getContainedBy = async () => {
+export const getContainedBy = async (name) => {
     const {data} = await axios.request({
         method: 'GET',
         url: `${url}/Parts/Containers`,
+        params: {
+            containerName: name,
+        },
     });
     return data;
 };

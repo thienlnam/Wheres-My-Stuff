@@ -13,8 +13,8 @@ import * as Constants from '../utility/constants';
 const ContainedByPage = () => {
     const queryClient = useQueryClient();
     const queryMultiple = () => {
-        const {data} = useQuery('partContainers', API.getContainedBy);
-        const containerData = useQuery('containers', API.getContainers);
+        const {data} = useQuery('partContainers', () => API.getContainedBy());
+        const containerData = useQuery('containers', () => API.getContainers());
         const partsData = useQuery('parts', () => API.getParts());
         return [data, containerData, partsData];
     };
