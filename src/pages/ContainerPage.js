@@ -7,7 +7,7 @@ import * as Constants from '../utility/constants';
 import Modals from '../components/Modals';
 
 const ContainerPage = () => {
-    const {data} = useQuery('containers', API.getContainers);
+    const {data} = useQuery('containers', () => API.getContainers());
     const queryClient = useQueryClient();
 
     const updateContainerMutation = useMutation(API.updateContainer, {

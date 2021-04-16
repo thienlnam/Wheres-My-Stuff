@@ -20,6 +20,9 @@ const DashboardPage = () => {
             command: 'Test',
             callback: (item) => handleVoiceCommand('find', item),
         },
+        /**
+         * FIND COMMANDS
+        */
         {
             command: 'Where is (my) (the) *',
             callback: (item) => VOICE.handleVoiceCommand(VOICE.FIND, {'item': item}, dispatch, resetTranscript),
@@ -28,6 +31,25 @@ const DashboardPage = () => {
             command: 'Where\'s (my) (the) *',
             callback: (item) => VOICE.handleVoiceCommand(VOICE.FIND, {'item': item}, dispatch, resetTranscript),
         },
+        {
+            command: 'What is in (my) (the) *',
+            callback: (container) => VOICE.handleVoiceCommand(VOICE.CONTENTS, {'container': container}, dispatch, resetTranscript),
+        },
+        {
+            command: 'What is inside (my) (the) *',
+            callback: (container) => VOICE.handleVoiceCommand(VOICE.CONTENTS, {'container': container}, dispatch, resetTranscript),
+        },
+        {
+            command: 'What\'s in (my) (the) *',
+            callback: (container) => VOICE.handleVoiceCommand(VOICE.CONTENTS, {'container': container}, dispatch, resetTranscript),
+        },
+        {
+            command: 'What\'s inside (my) (the) *',
+            callback: (container) => VOICE.handleVoiceCommand(VOICE.CONTENTS, {'container': container}, dispatch, resetTranscript),
+        },
+        /**
+         * UPDATE COMMANDS
+        */
         {
             command: 'Update * quantity to :number',
             callback: (item, number) => VOICE.handleVoiceCommand(VOICE.UPDATE, {'item': item, 'quantity': number}, dispatch, resetTranscript),
@@ -54,7 +76,9 @@ const DashboardPage = () => {
             isFuzzyMatch: true,
             bestMatchOnly: true,
         },
-        // Match selection choices
+        /**
+         * MATCH SELECTION CHOICES
+        */
         {
             command: '*',
             callback: (response) => VOICE.handleVoiceResponses(response, state, dispatch, resetTranscript),

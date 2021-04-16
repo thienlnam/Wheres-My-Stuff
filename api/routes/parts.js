@@ -45,7 +45,7 @@ function getParts(req, callback) {
             nameFilter,
         ]);
     } else {
-        sql = mysql.format('SELECT * FROM (SELECT P.partID, P.name, group_concat(DISTINCT C.name) AS categories FROM Parts P, CategorizedBy CB, Categories C WHERE P.partID = CB.partID AND C.categoryID = CB.categoryID GROUP BY P.name ORDER BY P.partID) AS A RIGHT JOIN (SELECT P1.partID, P1.name FROM Parts P1) AS B ON A.partID = B.partID GROUP BY B.partID;');
+        sql = mysql.format('SELECT * FROM (SELECT P.partID, P.name, group_concat(DISTINCT C.name) AS categories FROM Parts P, CategorizedBy CB, Categories C WHERE P.partID = CB.partID AND C.categoryID = CB.categoryID GROUP BY P.name, P.partID ORDER BY P.partID) AS A RIGHT JOIN (SELECT P1.partID, P1.name FROM Parts P1) AS B ON A.partID = B.partID GROUP BY B.partID;');
     }
 
     connection.query(sql, function(err, result) {
@@ -90,9 +90,15 @@ function createContainedBys(req, callback) {
 function getContainedBy(req, callback) {
     let sql = '';
     const nameFilter = req.query.name;
+    const containerFilter = req.query.containerName;
+
     if (nameFilter) {
         sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.name LIKE CONCAT(\'%\', ?, \'%\') AND p.partID = cb.partID AND c.containerID = cb.containerID;', [
             nameFilter,
+        ]);
+    } else if (containerFilter) {
+        sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity FROM Parts as p, Containers as c, ContainedBy as cb WHERE c.name LIKE CONCAT(\'%\', ?, \'%\') AND p.partID = cb.partID AND c.containerID = cb.containerID', [
+            containerFilter,
         ]);
     } else {
         sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.partID = cb.partID AND c.containerID = cb.containerID;');
