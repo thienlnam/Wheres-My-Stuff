@@ -73,6 +73,18 @@ export const getContainedBy = async (name) => {
     return data;
 };
 
+export const getContainedByIDs = async (partID, containerID) => {
+    const {data} = await axios.request({
+        method: 'GET',
+        url: `${url}/Parts/Containers`,
+        params: {
+            partID: partID,
+            containerID: containerID,
+        },
+    });
+    return data[0];
+};
+
 export const updateContainedBy = async (partContainerData) => {
     const {data} = await axios.patch(`${url}/Parts/${partContainerData.partID}/Containers/${partContainerData.containerID}`, partContainerData);
     return data;

@@ -11,6 +11,10 @@ export const STATE_READY = 'READY';
 export const STATE_PENDING_SELECTION = 'PENDING_SELECTION';
 export const STATE_PENDING_CONFIRMATION = 'PENDING_CONFIRMATION';
 
+// Update Types
+export const TYPE_INCREMENT = 'INCREMENT';
+export const TYPE_DECREMENT = 'DECREMENT';
+
 // List of valid responses
 export const YES_RESPONSES = ['yes', 'sure', 'yup', 'continue'];
 export const NO_RESPONSES = ['no', 'nope', 'stop'];
@@ -70,8 +74,27 @@ export async function handleVoiceResponses(response, state, dispatch, resetTrans
             command['partID'] = part.partID;
             command['containerID'] = part.containerID;
 
+            let confirmationMessage = '';
+
+            // Handle modifiers such as incrementing and decrementing here
+            if (command.modifier) {
+                const selectedPart = await API.getContainedByIDs(command.partID, command.containerID);
+                const currentQuantity = selectedPart.quantity;
+                const commandQuantity = command['quantity'];
+
+                if (command.modifier === TYPE_DECREMENT) {
+                    command['quantity'] = currentQuantity - parseInt(commandQuantity);
+                    confirmationMessage = `Are you sure you would like to decrement ${part.partName} by ${commandQuantity}? The new total will be ${command['quantity']}.`;
+                } else if (command.modifier === TYPE_INCREMENT) {
+                    command['quantity'] = currentQuantity + parseInt(commandQuantity);
+                    confirmationMessage = `Are you sure you would like to increment ${part.partName} by ${commandQuantity}? The new total will be ${command['quantity']}.`;
+                }
+            } else {
+                confirmationMessage = `Are you sure you would like to update ${part.partName} to ${command.quantity}?`;
+            }
+
             // Call requestConfirmation with new command
-            requestConfirmation(`Are you sure you would like to update ${part.partName} to ${command.quantity}?`, command, dispatch, resetTranscript);
+            requestConfirmation(confirmationMessage, command, dispatch, resetTranscript);
         } else {
             Handlers.setErrorMessage(`Not a valid selection! Try again or say 'Cancel'.`, dispatch);
         }
@@ -196,7 +219,6 @@ async function findCommand(data, dispatch) {
         message += `You have ${itemOccurances} location(s) where ${itemName} exists.\n`;
 
         item[1].forEach((detail) => {
-            console.log('detail:', detail);
             const containerName = detail.containerName;
             const containerLocation = detail.location;
             message += `${detail.quantity} in the ${containerName}${containerLocation ?
@@ -265,14 +287,34 @@ async function updateCommand(data, dispatch, resetTranscript) {
         return false;
     }
 
+    const command = {'type': UPDATE, 'quantity': data.quantity};
+
+    // If the update command is a 'Decrement' or 'Increment' command
+    if (data.type) {
+        command['modifier'] = data.type;
+    }
+
     // Only a single result, store necessary update data in command and prompt for confirmation
     if (result.length == 1) {
         const part = result[0];
-        const command = {'type': UPDATE, 'partID': part.partID, 'quantity': data.quantity, 'containerID': part.containerID};
-        const message = `Are you sure you would like to update ${part.partName} to ${data.quantity}?`;
+        command['partID'] = part.partID;
+        command['containerID'] = part.containerID;
+
+        const existingQuantity = part.quantity;
+        let message = '';
+
+        if (data.type && (data.type === TYPE_INCREMENT || data.type === TYPE_DECREMENT)) {
+            const isIncrement = data.type === TYPE_INCREMENT;
+            message = `Are you sure you would like to ${isIncrement ? 'increment' : 'decremenet'} quantity of ${part.partName} by ${data.quantity}?`;
+            command['quantity'] = isIncrement ? existingQuantity + data.quantity : existingQuantity - data.quantity;
+        } else {
+            message = `Are you sure you would like to update ${part.partName} to ${data.quantity}?`;
+            command['quantity'] = data.quantity;
+        }
+
         requestConfirmation(message, command, dispatch, resetTranscript);
     } else {
-        Handlers.setCommand({'type': UPDATE, 'quantity': data.quantity}, dispatch);
+        Handlers.setCommand(command, dispatch);
         requestSelection(result, dispatch, resetTranscript);
     }
 
@@ -294,11 +336,9 @@ export function generateVoiceButtons(state) {
     // Present the multiple options
     if (state.voiceState === STATE_PENDING_SELECTION && state.options.length > 0) {
         state.options.map((data, index) => {
-            console.log(data);
             voiceButtonData.push({'buttonText': data.partName + ' inside the ' + data.containerName, 'data': index});
         });
     }
 
     return voiceButtonData;
 }
-
