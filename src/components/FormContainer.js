@@ -45,7 +45,7 @@ FormContainer.propTypes = {
     formInputs: PropTypes.array.isRequired,
     onSubmit: PropTypes.any.isRequired,
     title: PropTypes.string.isRequired,
-    children: PropTypes.children,
+    children: PropTypes.node,
 };
 
 export default FormContainer;

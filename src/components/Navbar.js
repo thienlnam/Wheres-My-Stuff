@@ -3,44 +3,39 @@ import {Menu} from 'antd';
 import PropTypes from 'prop-types';
 import {UnorderedListOutlined, CodeSandboxOutlined, DashboardOutlined, UserOutlined, FolderOutlined, InboxOutlined, QuestionCircleOutlined} from '@ant-design/icons';
 import * as Constants from '../utility/constants';
+import {
+    Link,
+} from 'react-router-dom';
 
-const Navbar = (props) => {
-    const handleClick = (e) => {
-        props.changePage(e.key);
-    };
 
+const Navbar = () => {
     return (
         <>
-            <Menu onClick={handleClick} theme="light" selectedKeys={[props.currentPage]} mode="horizontal">
+            <Menu theme="light" mode="horizontal">
                 <Menu.Item key={Constants.HEADER_DASHBOARD} icon={<DashboardOutlined />}>
-            Dashboard
+                    <Link to="/dashboard">Home</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_CONTAINEDBY} icon={<InboxOutlined />}>
-            Part Locations
+                    <Link to="/containedBy">Parts Locations</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_PARTSLIST} icon={<UnorderedListOutlined />}>
-            Parts
+                    <Link to="/parts">Parts</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_CONTAINER} icon={<CodeSandboxOutlined />}>
-            Containers
+                    <Link to="/container">Containers</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_PROFILES} icon={<UserOutlined />}>
-            Profiles
+                    <Link to="/profile">Profiles</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_CATEGORY} icon={<FolderOutlined />}>
-            Categories
+                    <Link to="/category">Category</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_FAQ} icon={<QuestionCircleOutlined />}>
-            FAQ
+                    <Link to="/faq">FAQ</Link>
                 </Menu.Item>
             </Menu>
         </>
     );
-};
-
-Navbar.propTypes = {
-    changePage: PropTypes.func,
-    currentPage: PropTypes.string,
 };
 
 export default Navbar;

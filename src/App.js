@@ -16,48 +16,63 @@ import {
     QueryClientProvider,
 } from 'react-query';
 import {ReactQueryDevtools} from 'react-query/devtools';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect,
+} from 'react-router-dom';
 
 const queryClient = new QueryClient();
 
 function App() {
     const {Header, Content, Footer} = Layout;
 
-    const [currentPage, setPage] = useState(Constants.HEADER_DASHBOARD);
-
-    let pageShown;
-    if (currentPage === Constants.HEADER_PARTSLIST) {
-        pageShown = <PartListPage />;
-    } else if (currentPage === Constants.HEADER_CONTAINEDBY) {
-        pageShown = <ContainedByPage />;
-    } else if (currentPage === Constants.HEADER_CONTAINER) {
-        pageShown = <ContainerPage />;
-    } else if (currentPage === Constants.HEADER_PROFILES) {
-        pageShown = <ProfilePage />;
-    } else if (currentPage === Constants.HEADER_CATEGORY) {
-        pageShown = <CategoryPage />;
-    } else if (currentPage === Constants.HEADER_DASHBOARD) {
-        pageShown = <DashboardPage />;
-    } else if (currentPage === Constants.HEADER_FAQ) {
-        pageShown = <FAQPage />;
-    }
-
     return (
-        <Store>
-            <QueryClientProvider client={queryClient}>
-                <Layout className="layout">
-                    <Header>
-                        <Navbar currentPage={currentPage} changePage={setPage} />
-                    </Header>
-                    <Content style={{padding: '0 50px'}}>
-                        <div className="site-layout-content">
-                            {pageShown}
-                        </div>
-                    </Content>
-                    <Footer style={{textAlign: 'center'}}>Capstone CS Team 24 ©2020</Footer>
-                </Layout>
-                <ReactQueryDevtools initialIsOpen={false} />
-            </QueryClientProvider>
-        </Store>
+        <Router>
+            <Store>
+                <QueryClientProvider client={queryClient}>
+                    <Layout className="layout">
+                        <Header>
+                            <Navbar />
+                        </Header>
+                        <Content style={{padding: '0 50px'}}>
+                            <div className="site-layout-content">
+                                <Switch>
+                                    <Route exact path="/">
+                                        <Redirect to="/dashboard" />
+                                    </Route>
+                                    <Route path="/parts">
+                                        <PartListPage />
+                                    </Route>
+                                    <Route path="/containedBy">
+                                        <ContainedByPage />
+                                    </Route>
+                                    <Route path="/container">
+                                        <ContainerPage />
+                                    </Route>
+                                    <Route path="/profile">
+                                        <ProfilePage />
+                                    </Route>
+                                    <Route path="/category">
+                                        <CategoryPage />
+                                    </Route>
+                                    <Route path="/dashboard">
+                                        <DashboardPage />
+                                    </Route>
+                                    <Route path="/faq">
+                                        <FAQPage />
+                                    </Route>
+
+                                </Switch>
+                            </div>
+                        </Content>
+                        <Footer style={{textAlign: 'center'}}>Capstone CS Team 24 ©2020</Footer>
+                    </Layout>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                </QueryClientProvider>
+            </Store>
+        </Router>
     );
 }
 
