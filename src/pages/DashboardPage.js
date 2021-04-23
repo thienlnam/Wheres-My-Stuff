@@ -55,6 +55,14 @@ const DashboardPage = () => {
             callback: (item, number) => VOICE.handleVoiceCommand(VOICE.UPDATE, {'item': item, 'quantity': number}, dispatch, resetTranscript),
         },
         {
+            command: 'Add :number to *',
+            callback: (number, item) => VOICE.handleVoiceCommand(VOICE.UPDATE, {'item': item, 'quantity': number, 'type': VOICE.TYPE_INCREMENT}, dispatch, resetTranscript),
+        },
+        {
+            command: 'Remove :number from *',
+            callback: (number, item) => VOICE.handleVoiceCommand(VOICE.UPDATE, {'item': item, 'quantity': number, 'type': VOICE.TYPE_DECREMENT}, dispatch, resetTranscript),
+        },
+        {
             command: 'clear',
             callback: () => clearButtonClick(),
         },

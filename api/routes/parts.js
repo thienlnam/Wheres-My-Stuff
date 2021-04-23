@@ -91,6 +91,8 @@ function getContainedBy(req, callback) {
     let sql = '';
     const nameFilter = req.query.name;
     const containerFilter = req.query.containerName;
+    const partID = req.query.partID;
+    const containerID = req.query.containerID;
 
     if (nameFilter) {
         sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.name LIKE CONCAT(\'%\', ?, \'%\') AND p.partID = cb.partID AND c.containerID = cb.containerID;', [
@@ -100,6 +102,12 @@ function getContainedBy(req, callback) {
         sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity FROM Parts as p, Containers as c, ContainedBy as cb WHERE c.name LIKE CONCAT(\'%\', ?, \'%\') AND p.partID = cb.partID AND c.containerID = cb.containerID', [
             containerFilter,
         ]);
+    } else if (partID && containerID) {
+        sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity FROM Parts as p, Containers as c, ContainedBy as cb WHERE cb.partID = ? AND cb.containerID = ? AND p.partID = cb.partID AND c.containerID = cb.containerID', [
+            partID,
+            containerID,
+        ]);
+        console.log(sql);
     } else {
         sql = mysql.format('SELECT p.partID, p.name as partName, cb.containerID, c.name as containerName, cb.quantity, cb.identifier FROM Parts as p, Containers as c, ContainedBy as cb WHERE p.partID = cb.partID AND c.containerID = cb.containerID;');
     }
