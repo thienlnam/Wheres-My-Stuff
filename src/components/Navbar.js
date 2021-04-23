@@ -28,7 +28,7 @@ const Navbar = () => {
                     <Link to="/profile">Profiles</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_CATEGORY} icon={<FolderOutlined />}>
-                    <Link to="/category">Category</Link>
+                    <Link to="/categories">Categories</Link>
                 </Menu.Item>
                 <Menu.Item key={Constants.HEADER_FAQ} icon={<QuestionCircleOutlined />}>
                     <Link to="/faq">FAQ</Link>

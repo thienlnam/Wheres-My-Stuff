@@ -54,7 +54,7 @@ function App() {
                                     <Route path="/profile">
                                         <ProfilePage />
                                     </Route>
-                                    <Route path="/category">
+                                    <Route path="/categories">
                                         <CategoryPage />
                                     </Route>
                                     <Route path="/dashboard">
