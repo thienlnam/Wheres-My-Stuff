@@ -22,7 +22,7 @@ const Store = ({children}) => {
 };
 
 Store.propTypes = {
-    children: PropTypes.children,
+    children: PropTypes.node,
 };
 
 export const Context = createContext(initialState);
