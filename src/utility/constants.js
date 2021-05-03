@@ -19,15 +19,20 @@ export const DASH_HELP_BODY =
 export const DASH_COMMANDS_TITLE = 'Supported Voice Commands';
 export const DASH_COMMANDS_BODY =
     '<p><b>These are the supported voice commands</b></p><br />' +
-    '<p><b>Find:</b> Find a Part with the below commands:</p>' +
+    '<p><b>Find:</b> Find a Part or contents of a Container with the below commands:</p>' +
     '<ul>' +
         '<li>Where\'s my/the (Part)?</li>' +
         '<li>Where is my/the (Part)?</li>' +
+        '<li>What is inside my/the (Container Name)</li>' +
+        '<li>What\'s in my/the (Container Name)</li>' +
     '</ul>' +
     '<p><b>Update:</b> Update a Part with the below commands:</p>' +
-   '<ul>' +
+    '<ul>' +
         '<li>Update (Part) quantity to (Number)</li>' +
-    '</ul>';
+        '<li>Add (Number) to (Part)</li>' +
+        '<li>Remove (Number) from (Part)</li>' +
+    '</ul>' +
+    '<p><b>Clear:</b> Use the command \'Clear\' to clear the output text';
 
 export const CATEGORY_HELP_TITLE = 'Categories Help';
 export const CATEGORY_HELP_BODY =
