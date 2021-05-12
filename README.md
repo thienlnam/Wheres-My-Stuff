@@ -12,6 +12,8 @@ To run this app locally, you'll need to have React installed.  Follow the steps 
 
 After you've completed that, run `npm install` to install dependencies and then run `npm start` to bring up the app.  Saving changes should refresh the app automatically.
 
+You will also need to install Nodejs for access to the `npm` commands. This can be downloaded [Here](https://www.npmjs.com/get-npm).
+
 ### Database Setup
 
 MySQL workbench is useful in executing queries and managing the database.
