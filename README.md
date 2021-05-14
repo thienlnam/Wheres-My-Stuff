@@ -1,9 +1,18 @@
-# Capstone Inventory App
-
-[![GitHub Super-Linter](https://github.com/<OWNER>/<REPOSITORY>/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
-
+# Where's My Stuff?
 Where's My Stuff? Voice controlled Inventory Application
 Capstone project for group 24
+
+Where's My Stuff is an web-based inventory application that also contains voice handling for updating item quantities or asking for part locations.
+
+Features:
+- Create new parts and containers
+- Store parts in containers and update their quantity
+- Edit / modify part names and container details
+- Voice Commands:
+  - Ask where specific parts are
+  - Asking for parts inside a container
+  - Updating part quantity in a container
+  - Increment/Decrement part quantity in a container
 
 
 ## Installation and local development
