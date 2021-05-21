@@ -75,7 +75,7 @@ const PartListPage = () => {
 
     return (
         <div>
-            <Modals title={Constants.PARTS_HELP_TITLE} body={Constants.PARTS_HELP_BODY} button='?'/>
+            <Modals title={Constants.PARTS_HELP_TITLE} body={Constants.PARTS_HELP_BODY} button='Help'/>
 
             <FormContainer title='Add an item' onSubmit={createPartMutation.mutate} formInputs={formInputs}>
                 <Form.Item

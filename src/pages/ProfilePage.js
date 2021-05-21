@@ -20,7 +20,7 @@ const ProfilesPage = () => {
 
     return (
         <div>
-            <Modals title={Constants.PROFILE_HELP_TITLE} body={Constants.PROFILE_HELP_BODY} button='?'/>
+            <Modals title={Constants.PROFILE_HELP_TITLE} body={Constants.PROFILE_HELP_BODY} button='Help'/>
 
             <Table
                 columns={[

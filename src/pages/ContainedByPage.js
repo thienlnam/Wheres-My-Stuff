@@ -71,7 +71,7 @@ const ContainedByPage = () => {
 
     return (
         <div>
-            <Modals title={Constants.CONTAINED_HELP_TITLE} body={Constants.CONTAINED_HELP_BODY} button='?'/>
+            <Modals title={Constants.CONTAINED_HELP_TITLE} body={Constants.CONTAINED_HELP_BODY} button='Help'/>
 
             <FormContainer title="Add Part To Container" onSubmit={createContainedByMutation.mutate} formInputs={formInputs}>
                 <Form.Item
