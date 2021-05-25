@@ -43,7 +43,7 @@ const CategoryPage = () => {
 
     return (
         <div>
-            <Modals title={Constants.CATEGORY_HELP_TITLE} body={Constants.CATEGORY_HELP_BODY} button='?'/>
+            <Modals title={Constants.CATEGORY_HELP_TITLE} body={Constants.CATEGORY_HELP_BODY} button='Help'/>
 
             <FormContainer title='Add a Category' onSubmit={createCategoryMutation.mutate} formInputs={formInputs}/>
 

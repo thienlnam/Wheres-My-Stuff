@@ -46,7 +46,7 @@ const ContainerPage = () => {
 
     return (
         <div>
-            <Modals title={Constants.CONTAINER_HELP_TITLE} body={Constants.CONTAINER_HELP_BODY} button='?'/>
+            <Modals title={Constants.CONTAINER_HELP_TITLE} body={Constants.CONTAINER_HELP_BODY} button='Help'/>
 
             <FormContainer title='Add a container' onSubmit={createContainerMutation.mutate} formInputs={formInputs} />
             <br /><br />

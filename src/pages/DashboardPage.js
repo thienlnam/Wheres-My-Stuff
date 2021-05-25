@@ -120,7 +120,7 @@ const DashboardPage = () => {
 
     return (
         <div className="site-card-wrapper">
-            <Modals title={Constants.DASH_HELP_TITLE} body={Constants.DASH_HELP_BODY} button='?' />
+            <Modals title={Constants.DASH_HELP_TITLE} body={Constants.DASH_HELP_BODY} button='Help' />
             <Modals title={Constants.DASH_COMMANDS_TITLE} body={Constants.DASH_COMMANDS_BODY} button='Commands'/>
             <Card title="Voice Control" bordered={false}>
                 {SpeechRecognition.browserSupportsSpeechRecognition() ? (
