@@ -94,6 +94,17 @@ const DashboardPage = () => {
         },
     ];
 
+    // Ensures that the user has microphone permissions to use the voice application
+    const checkMicrophonePermissions = () => {
+        const permissions = navigator.mediaDevices.getUserMedia({audio: true, video: false})
+        permissions.then(() => {
+            console.log("User has accepted microphone permissions");
+        }).catch((err) => {
+            alert("You'll need to accept the microphone permissions to use the voice control!");
+            console.error(err);
+        })
+    }
+
     const {transcript, resetTranscript, listening} = useSpeechRecognition({commands});
 
     const voiceButtonData = VOICE.generateVoiceButtons(state);
@@ -117,6 +128,10 @@ const DashboardPage = () => {
     const exportData = async () => {
         return await API.exportData();
     };
+
+    if (SpeechRecognition.browserSupportsSpeechRecognition()) {
+        checkMicrophonePermissions();
+    }
 
     return (
         <div className="site-card-wrapper">
