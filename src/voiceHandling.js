@@ -171,12 +171,13 @@ function requestSelection(options, dispatch, resetTranscript) {
     // Generate the options from the list of items
     for (let i = 0; i < options.length; i++) {
         const partName = options[i].partName;
+        const containerName = options[i].containerName;
         userOptions.push(`${i}`);
         userOptions.push(partName.toLowerCase());
-        outputMessage += `${i}: ${partName}\n`;
+        outputMessage += `${i}: ${partName} in the ${containerName}\n`;
     }
 
-    outputMessage += `Please say the item name or the number corresponding to it.`;
+    outputMessage += `Please say the item name or the number corresponding to it or use the buttons to select an item.`;
 
     // Update our global state with new details
     Handlers.setUserChoice(userOptions, dispatch);
